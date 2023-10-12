@@ -26,11 +26,11 @@ public class Sentence {
     private String voiceFile;
 
 
-    public Sentence(String srcSentence, String desSituation, String translatedSentence, String voiceFile) {
-        this.srcSentence = srcSentence;
-        this.desiredSituation = desSituation;
-        this.translatedSentence = translatedSentence;
-        this.voiceFile = voiceFile;
-    }
+//    public Sentence(String srcSentence, String desSituation, String translatedSentence, String voiceFile) {
+//        this.srcSentence = srcSentence;
+//        this.desiredSituation = desSituation;
+//        this.translatedSentence = translatedSentence;
+//        this.voiceFile = voiceFile;
+//    }
 
 }

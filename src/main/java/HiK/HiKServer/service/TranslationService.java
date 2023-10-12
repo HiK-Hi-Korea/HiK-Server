@@ -2,9 +2,11 @@ package HiK.HiKServer.service;
 
 import HiK.HiKServer.dto.TranslationForm;
 import HiK.HiKServer.entity.Sentence;
+import HiK.HiKServer.repositroy.SentenceRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -19,6 +21,9 @@ import java.util.Map;
 @Slf4j
 @Service
 public class TranslationService {
+    @Autowired
+    private SentenceRepository sentenceRepository;
+
     @Transactional
     public Sentence translation(TranslationForm dto){
         String srcSentence = dto.getSourceSentence();
@@ -29,8 +34,12 @@ public class TranslationService {
         // ai모델로 translatedSentence, desSituation 넘겨서 targetSentence 받아오기
         // 최종 targetSentence 를 TTS 해서 voiceFile 받아오기
         String voiceFile = "papago_getVoicefile()";
-        Sentence sentence = new Sentence(srcSentence, desSituation, translatedSentence, voiceFile);
-        return sentence;
+        Long temp_id = null;
+        Sentence sentence = new Sentence(temp_id, srcSentence, desSituation, translatedSentence, voiceFile);
+
+        // DB에 저장
+        Sentence saved = sentenceRepository.save(sentence);
+        return saved;
     }
 
     public String getPapagoTransSentence(String s){
