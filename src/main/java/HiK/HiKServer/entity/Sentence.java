@@ -19,7 +19,14 @@ public class Sentence {
     @Column
     private String srcSentence;
     @Column
-    private String desiredSituation;
+    private String place;
+
+    @Column
+    private String listener;
+
+    @Column
+    private int intimacy;
+
     @Column
     private String translatedSentence;
     @Column

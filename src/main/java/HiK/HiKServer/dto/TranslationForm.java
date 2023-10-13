@@ -9,5 +9,7 @@ import lombok.ToString;
 @Getter
 public class TranslationForm {
     private String sourceSentence;
-    private String desiredSituation;
+    private String place;
+    private String listener;
+    private int intimacy;
 }

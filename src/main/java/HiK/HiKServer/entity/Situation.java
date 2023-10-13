@@ -10,4 +10,5 @@ import lombok.Getter;
 public class Situation {
     private String place;
     private String listner;
+    private String intimacy;
 }
