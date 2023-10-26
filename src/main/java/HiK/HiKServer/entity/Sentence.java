@@ -10,6 +10,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Getter
+@Table(name = "sentence")
 @Entity
 public class Sentence {
     @Id
