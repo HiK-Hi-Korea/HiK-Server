@@ -4,6 +4,9 @@ import HiK.HiKServer.dto.TranslationForm;
 import HiK.HiKServer.entity.Sentence;
 import HiK.HiKServer.repositroy.SentenceRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @PropertySource("classpath:apikey.properties")
 @Slf4j
@@ -35,7 +36,9 @@ public class TranslationService {
 
     @Value("${chatGPT}")
     private String chatGPT_apiKey;
-    private static final String COMPLETION_ENDPOINT = "https://api.openai.com/v1/completions";
+    private final static String COMPLETION_ENDPOINT = "https://api.openai.com/v1/chat/completions";
+    private final static String ROLE_USER="user";
+    private final static String MODEL="gpt-3.5-turbo";
 
     @Transactional
     public Sentence translation(TranslationForm dto){
@@ -44,10 +47,12 @@ public class TranslationService {
         String listener = dto.getListener();
         int intimacy = dto.getIntimacy();
         // papago 번역 api이용
-        String middleSentence = getPapagoTransSentence(srcSentence);
+        String secondSentence = getPapagoTransSentence(srcSentence);
 
         // ai모델로 translatedSentence, desSituation 넘겨서 targetSentence 받아오기
-        String translatedSentence = getConversation(middleSentence);
+        String thirdSentence = makePrompt(secondSentence, place, listener, intimacy);
+        String translatedSentence = createTargetSentence(thirdSentence);
+        log.info(translatedSentence);
         if (translatedSentence == null){
             throw new IllegalStateException("chat gpt - generate sentence 실패!");
         }
@@ -59,6 +64,20 @@ public class TranslationService {
         // DB에 저장
         Sentence saved = sentenceRepository.save(sentence);
         return saved;
+    }
+
+    public String makePrompt(String srcSentence, String place, String listener, int intimacy){
+        String prompt = "Your task is to convert the wording of the text according to the listener.\n" +
+                "\n" +
+                "Below is an explanation of the speech to be converted according to the listener.\n" +
+                "1) If the listener is a professor, he or she should speak in a polite way.\n" +
+                "2) If the listener is a friend and the intimacy is 1, you should use honorifics.\n" +
+                "3) If the listener is a friend and the intimacy is 2, half-formal should be used.\n" +
+                "4) If the listener is a friend and the intimacy is 3, he or she should use an intimate tone.\n" +
+                "\n" +
+                "I want to tell the "+listener+" the \""+ srcSentence+"\". Please change it and give me a sentence (only one)\n";
+
+        return prompt;
     }
 
     public String getPapagoTransSentence(String s){
@@ -142,28 +161,31 @@ public class TranslationService {
         }
     }
 
-    public String getConversation(String srcSentence) {
-        String answer = null;
+    public String createTargetSentence(String srcSentence) {
+        String result = null;
         try {
-            answer= generateText(srcSentence, 0.5f, 1000);
-            String answerFilter1 = answer.replaceAll("\n", "");
-            String result =  answerFilter1.replaceAll("\\.","");
-            result =  result.replaceAll("\\\\","");
-            result =  result.replaceAll("\"","");
+            result= getGPTAnswer(srcSentence, 0, 1000)
+                    .replaceAll("\n", "")
+                    .replaceAll("\\.","")
+                    .replaceAll("\\\\","")
+                    .replaceAll("\"","");
         } catch (Exception e) {
-            log.info("generateText error(서버 에러)");
+            log.info("getGPTAnswer error(서버 에러)");
         }
-        return answer;
+        return result;
     }
 
-    public String generateText(String prompt, float temperature, int maxTokens) {
+    public String getGPTAnswer(String prompt, float temperature, int maxTokens) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + chatGPT_apiKey);
 
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new ChatMessage("user", prompt));
+
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model","text-davinci-003");
-        requestBody.put("prompt", prompt);
+        requestBody.put("model",MODEL);
+        requestBody.put("messages", messages);
         requestBody.put("temperature", temperature);
         requestBody.put("max_tokens", maxTokens);
 
@@ -172,12 +194,23 @@ public class TranslationService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Map> response = restTemplate.postForEntity(COMPLETION_ENDPOINT, requestEntity, Map.class);
         Map<String, Object> responseBody = response.getBody();
-        System.out.println(responseBody.toString());
+        log.info("Chat GPT response body:\n"+responseBody.toString());
 
         List<Map<String, Object>> choicesList = (List<Map<String, Object>>)responseBody.get("choices");
         Map<String, Object> choiceMap = choicesList.get(0);
-        String answer = (String)choiceMap.get("text");
+        Map<String, Object> content = (Map<String, Object>)choiceMap.get("message");
+        String answer = (String) content.get("content");
+        log.info("챗지피티 답변:"+answer);
 
         return answer;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class ChatMessage{
+        private String role;
+        private String content;
+    }
+
 }
