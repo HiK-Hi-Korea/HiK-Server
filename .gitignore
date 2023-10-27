@@ -37,3 +37,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Secret ###
+application-oauth.properties
+apikey.properties
