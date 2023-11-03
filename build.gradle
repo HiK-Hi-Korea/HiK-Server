@@ -23,9 +23,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mustache'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.json:json:20210307'
+	implementation 'com.google.cloud:google-cloud-texttospeech:2.29.0'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()

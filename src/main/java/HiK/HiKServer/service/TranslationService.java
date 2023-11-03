@@ -3,6 +3,8 @@ package HiK.HiKServer.service;
 import HiK.HiKServer.dto.TranslationForm;
 import HiK.HiKServer.entity.Sentence;
 import HiK.HiKServer.repositroy.SentenceRepository;
+import com.google.cloud.texttospeech.v1.*;
+import com.google.protobuf.ByteString;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +27,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @PropertySource("classpath:apikey.properties")
 @Slf4j
@@ -34,14 +39,19 @@ public class TranslationService {
     @Autowired
     private SentenceRepository sentenceRepository;
 
-    @Value("${chatGPT}")
+    @Value("${papago.client.secrete}")
+    private String papago_clientSecret;
+    @Value("${papago.client.id}")
+    private String papago_clientID;
+
+    @Value("${chatGPT.apikey}")
     private String chatGPT_apiKey;
     private final static String COMPLETION_ENDPOINT = "https://api.openai.com/v1/chat/completions";
     private final static String ROLE_USER="user";
     private final static String MODEL="gpt-3.5-turbo";
 
     @Transactional
-    public Sentence translation(TranslationForm dto){
+    public Sentence translation(TranslationForm dto) throws IOException {
         String srcSentence = dto.getSourceSentence();
         String place = dto.getPlace();
         String listener = dto.getListener();
@@ -52,18 +62,55 @@ public class TranslationService {
         // ai모델로 translatedSentence, desSituation 넘겨서 targetSentence 받아오기
         String thirdSentence = makePrompt(secondSentence, place, listener, intimacy);
         String translatedSentence = createTargetSentence(thirdSentence);
-        log.info(translatedSentence);
+        log.info("chat gpt로 변환된 문장 : "+translatedSentence);
         if (translatedSentence == null){
             throw new IllegalStateException("chat gpt - generate sentence 실패!");
         }
-        // 최종 targetSentence 를 TTS 해서 voiceFile 받아오기
-        String voiceFile = "papago_getVoicefile()";
+        // 최종 targetSentence 를 TTS 해서 voiceFile 받아오기 (파일 경로 반환)
+        String voiceFile = getTTS(translatedSentence);
+//        String voiceFile = "getTTS(translatedSentence)";
         Long temp_id = null;
         Sentence sentence = new Sentence(temp_id, srcSentence, place, listener, intimacy, translatedSentence, voiceFile);
 
         // DB에 저장
         Sentence saved = sentenceRepository.save(sentence);
         return saved;
+    }
+    public String getTTS(String text) throws IOException {
+        String filePath = ""+text+".mp3";
+
+        // Instantiates a client
+        try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
+            // Set the text input to be synthesized
+            SynthesisInput input = SynthesisInput.newBuilder().setText(text).build();
+
+            // Build the voice request, select the language code ("en-US") and the ssml voice gender
+            // ("neutral")
+            VoiceSelectionParams voice =
+                    VoiceSelectionParams.newBuilder()
+                            .setLanguageCode("ko-KR")
+                            .setSsmlGender(SsmlVoiceGender.FEMALE)
+                            .build();
+
+            // Select the type of audio file you want returned
+            AudioConfig audioConfig =
+                    AudioConfig.newBuilder().setAudioEncoding(AudioEncoding.MP3).build();
+
+            // Perform the text-to-speech request on the text input with the selected voice parameters and
+            // audio file type
+            SynthesizeSpeechResponse response =
+                    textToSpeechClient.synthesizeSpeech(input, voice, audioConfig);
+
+            // Get the audio contents from the response
+            ByteString audioContents = response.getAudioContent();
+
+            // Write the response to the output file.
+            try (OutputStream out = new FileOutputStream(filePath)) {
+                out.write(audioContents.toByteArray());
+                log.info("Audio content written to file \""+filePath+"\"");
+            }
+        }
+        return filePath;
     }
 
     public String makePrompt(String srcSentence, String place, String listener, int intimacy){
@@ -81,9 +128,6 @@ public class TranslationService {
     }
 
     public String getPapagoTransSentence(String s){
-        String clientID ="M5H4pKogtVC1vmBrGU3g";
-        String clientSecret = "owQ8rx0IZc";
-
         String apiURL = "https://openapi.naver.com/v1/papago/n2mt";
         String text;
         try{
@@ -93,8 +137,8 @@ public class TranslationService {
         }
 
         Map<String, String> requestHeaders =new HashMap<>();
-        requestHeaders.put("X-Naver-Client-Id", clientID);
-        requestHeaders.put("X-Naver-Client-Secret", clientSecret);
+        requestHeaders.put("X-Naver-Client-Id", papago_clientID);
+        requestHeaders.put("X-Naver-Client-Secret", papago_clientSecret);
 
         String responseBody = post(apiURL, requestHeaders, text);
         log.info("responseBody = " + responseBody);
