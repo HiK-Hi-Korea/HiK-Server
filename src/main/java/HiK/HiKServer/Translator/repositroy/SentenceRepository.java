@@ -1,4 +1,4 @@
-package HiK.HiKServer.repositroy;
+리package HiK.HiKServer.Translator.repositroy;
 
 import HiK.HiKServer.entity.Sentence;
 import org.springframework.data.repository.CrudRepository;

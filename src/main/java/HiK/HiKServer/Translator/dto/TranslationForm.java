@@ -1,4 +1,4 @@
-package HiK.HiKServer.dto;
+package HiK.HiKServer.Translator.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
