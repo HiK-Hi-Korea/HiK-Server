@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -19,6 +22,7 @@ public class Sentence {
 
     @Column
     private String srcSentence;
+
     @Column
     private String place;
 
@@ -30,15 +34,24 @@ public class Sentence {
 
     @Column
     private String translatedSentence;
+
     @Column
     private String voiceFile;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column
+    private ZonedDateTime timestamp;
 
-//    public Sentence(String srcSentence, String desSituation, String translatedSentence, String voiceFile) {
-//        this.srcSentence = srcSentence;
-//        this.desiredSituation = desSituation;
-//        this.translatedSentence = translatedSentence;
-//        this.voiceFile = voiceFile;
-//    }
 
+    public Sentence(Long sentenceId, String srcSentence, String place, String listener, int intimacy, String translatedSentence, String voiceFile) {
+        this.sentenceId = sentenceId;
+        this.srcSentence = srcSentence;
+        this.place = place;
+        this.listener = listener;
+        this.intimacy = intimacy;
+        this.translatedSentence = translatedSentence;
+        this.voiceFile = voiceFile;
+        timestamp = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+    }
 }
