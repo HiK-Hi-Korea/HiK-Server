@@ -72,7 +72,7 @@ public class TranslationService {
     }
 
     public String getTTS(String text) throws IOException {
-        String filePath = "voice/"+text+".mp3";
+        String filePath = text+".mp3";
 
         // Instantiates a client
         try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {

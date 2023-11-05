@@ -41,3 +41,4 @@ out/
 ### Secret ###
 application-oauth.properties
 apikey.properties
+src/main/java/HiK/HiKServer/Translator/service/GptPrompt.java
