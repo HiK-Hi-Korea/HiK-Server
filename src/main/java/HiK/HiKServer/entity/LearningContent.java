@@ -26,4 +26,8 @@ public class LearningContent {
 
     @OneToMany(mappedBy = "learningContent", cascade = CascadeType.ALL)
     private List<Sentence> sentences = new ArrayList<>();
+
+    public void addSentence(Sentence sentence) {
+        sentences.add(sentence);
+    }
 }
