@@ -42,6 +42,9 @@ public class Sentence {
     @Column
     private ZonedDateTime timestamp;
 
+    @ManyToOne
+    @JoinColumn(name = "learningContent_id")
+    private LearningContent learningContent;
 
     public Sentence(Long sentenceId, String srcSentence, String place, String listener, int intimacy, String translatedSentence, String voiceFile) {
         this.sentenceId = sentenceId;
