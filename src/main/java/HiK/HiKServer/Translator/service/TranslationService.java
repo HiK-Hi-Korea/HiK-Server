@@ -3,8 +3,10 @@ package HiK.HiKServer.Translator.service;
 import HiK.HiKServer.LearningContents.repository.LearningContentRepository;
 import HiK.HiKServer.Translator.dto.TranslationForm;
 import HiK.HiKServer.Translator.repositroy.SentenceRepository;
+import HiK.HiKServer.User.UserRepository;
 import HiK.HiKServer.entity.LearningContent;
 import HiK.HiKServer.entity.Sentence;
+import HiK.HiKServer.entity.User;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import jakarta.transaction.Transactional;
@@ -37,9 +39,10 @@ import java.util.Map;
 public class TranslationService {
     @Autowired
     private SentenceRepository sentenceRepository;
-
     @Autowired
     private LearningContentRepository learningContentRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Value("${papago.client.secrete}")
     private String papago_clientSecret;
@@ -51,8 +54,12 @@ public class TranslationService {
     private final static String COMPLETION_ENDPOINT = "https://api.openai.com/v1/chat/completions";
     private final static String MODEL="gpt-4";
 
+
     @Transactional
-    public Sentence translation(TranslationForm dto) throws IOException {
+    public Sentence translation(String userId, TranslationForm dto) throws IOException {
+        User user = userRepository.findById(Long.parseLong(userId))
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
+
         String srcSentence = dto.getSourceSentence();
         String place = dto.getPlace();
         String listener = dto.getListener();
@@ -76,16 +83,17 @@ public class TranslationService {
         Sentence createdSentence = sentenceRepository.save(sentence);
 
         // 비슷한 시간대와 장소에서 생성된 sentence 찾고 LearningContent 업데이트 메소드 비동기 호출
-        updateLearningContentAsync(createdSentence);
+        updateLearningContentAsync(createdSentence, user);
         return createdSentence;
     }
 
     @Async
-    public void updateLearningContentAsync(Sentence sentence){
-        List<Sentence> similarSentences = sentenceRepository.findSimilarSentences(sentence.getPlace(), sentence.getTimestamp());
+    public void updateLearningContentAsync(Sentence sentence, User user){
+        List<Sentence> similarSentences = sentenceRepository.findSimilarSentences(user.getUserId(), sentence.getPlace(), sentence.getTimestamp());
         // 비슷한 Sentence가 없으면 새 LearningContent 생성
         if (similarSentences.isEmpty()) {
             LearningContent learningContent = new LearningContent();
+            learningContent.setUser(user);
             learningContent.addSentence(sentence);
             learningContentRepository.save(learningContent);
         } else {

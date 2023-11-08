@@ -20,6 +20,10 @@ public class Sentence {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sentenceId;
 
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column
     private String srcSentence;
 
@@ -55,6 +59,5 @@ public class Sentence {
         this.translatedSentence = translatedSentence;
         this.voiceFile = voiceFile;
         timestamp = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-
     }
 }

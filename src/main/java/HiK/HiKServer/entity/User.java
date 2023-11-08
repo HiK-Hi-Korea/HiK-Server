@@ -18,7 +18,7 @@ import java.util.List;
 public class User {
 
     @Id
-    private Long userId;
+    private String userId;
     @Column
     private String username;
     @Column
