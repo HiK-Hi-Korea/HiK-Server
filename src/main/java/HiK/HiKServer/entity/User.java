@@ -19,6 +19,7 @@ public class User {
 
     @Id
     private String userId;
+
     @Column
     private String username;
     @Column

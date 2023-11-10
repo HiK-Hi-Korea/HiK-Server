@@ -13,7 +13,7 @@ public class UserApiController {
     private UserService userService;
 
     @GetMapping("/{userId}/learning-contents")
-    public ResponseEntity<List<LearningContent>> getLearningContentsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<LearningContent>> getLearningContentsByUserId(@PathVariable String userId) {
         List<LearningContent> learningContents = userService.getLearningContentsByUserId(userId);
         return ResponseEntity.ok(learningContents);
     }

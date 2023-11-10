@@ -3,7 +3,7 @@ package HiK.HiKServer.Translator.service;
 import HiK.HiKServer.LearningContents.repository.LearningContentRepository;
 import HiK.HiKServer.Translator.dto.TranslationForm;
 import HiK.HiKServer.Translator.repositroy.SentenceRepository;
-import HiK.HiKServer.User.UserRepository;
+import HiK.HiKServer.User.repository.UserRepository;
 import HiK.HiKServer.entity.LearningContent;
 import HiK.HiKServer.entity.Sentence;
 import HiK.HiKServer.entity.User;
@@ -57,7 +57,7 @@ public class TranslationService {
 
     @Transactional
     public Sentence translation(String userId, TranslationForm dto) throws IOException {
-        User user = userRepository.findById(Long.parseLong(userId))
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
 
         String srcSentence = dto.getSourceSentence();
