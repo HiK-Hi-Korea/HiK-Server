@@ -10,9 +10,6 @@ import HiK.HiKServer.entity.User;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -183,13 +180,4 @@ public class TranslationService {
 
         return answer;
     }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class ChatMessage{
-        private String role;
-        private String content;
-    }
-
 }
