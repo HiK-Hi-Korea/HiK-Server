@@ -20,7 +20,7 @@ import java.io.IOException;
 public class TranslationController {
 
     @Autowired
-    private TranslationService translationService;
+    TranslationService translationService;
 
     @PostMapping("/trans")
     public ResponseEntity<Sentence> translation(@RequestBody TranslationForm translationForm) throws IOException {

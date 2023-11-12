@@ -59,9 +59,9 @@ public class TranslationService {
 
 
     @Transactional
-    public Sentence translation(String userId, TranslationForm dto) throws IOException {
-        User user = userRepository.findById(Long.parseLong(userId))
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
+    public Sentence translation(TranslationForm dto) throws IOException {
+//        User user = userRepository.findById(Long.parseLong(userId))
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
 
         String srcSentence = dto.getSourceSentence();
         String place = dto.getPlace();
@@ -86,7 +86,7 @@ public class TranslationService {
         Sentence createdSentence = sentenceRepository.save(sentence);
 
         // 비슷한 시간대와 장소에서 생성된 sentence 찾고 LearningContent 업데이트 메소드 비동기 호출
-        updateLearningContentAsync(createdSentence, user);
+        // updateLearningContentAsync(createdSentence, user);
         return createdSentence;
     }
 
