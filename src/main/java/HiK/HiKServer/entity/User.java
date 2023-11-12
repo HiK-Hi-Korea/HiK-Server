@@ -1,13 +1,13 @@
 package HiK.HiKServer.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +18,7 @@ import lombok.ToString;
 public class User {
 
     @Id
-    private Long userId;
+    private String userId;
     @Column
     private String username;
     @Column
@@ -29,4 +29,7 @@ public class User {
     private String nation;
     @Column
     private String language;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<LearningContent> learningContentList = new ArrayList<>();
 }
