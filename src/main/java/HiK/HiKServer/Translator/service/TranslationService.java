@@ -35,6 +35,9 @@ public class TranslationService {
     @Autowired
     private SentenceRepository sentenceRepository;
 
+    @Autowired
+    private S3UploadService s3UploadService;
+
     @Value("${papago.client.secrete}")
     private String papago_clientSecret;
     @Value("${papago.client.id}")
@@ -44,6 +47,7 @@ public class TranslationService {
     private String chatGPT_apiKey;
     private final static String COMPLETION_ENDPOINT = "https://api.openai.com/v1/chat/completions";
     private final static String MODEL="gpt-4";
+
 
     @Transactional
     public Sentence translation(TranslationForm dto) throws IOException {
@@ -72,8 +76,8 @@ public class TranslationService {
     }
 
     public String getTTS(String text) throws IOException {
-        String filePath = text+".mp3";
-
+        String filename = text+".mp3";
+        String url;
         // Instantiates a client
         try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
             SynthesisInput input = SynthesisInput.newBuilder().setText(text).build();
@@ -98,12 +102,15 @@ public class TranslationService {
             ByteString audioContents = response.getAudioContent();
 
             // Write the response to the output file.
-            try (OutputStream out = new FileOutputStream(filePath)) {
+            try (OutputStream out = new FileOutputStream(filename)) {
                 out.write(audioContents.toByteArray());
-                log.info("Audio content written to file \""+filePath+"\"");
+                log.info("Audio content written to file \""+filename+"\"");
             }
+
+            // Upload ByteString to S3 and get URL
+            url = s3UploadService.uploadByteStringToS3(audioContents, filename);
         }
-        return filePath;
+        return url;
     }
 
     public String createTargetSentence(String system, String prompt) {
