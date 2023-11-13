@@ -68,7 +68,17 @@ public class TranslationService {
         String listener = dto.getListener();
         int intimacy = dto.getIntimacy();
 
-        GptPrompt gptPrompt = new GptPrompt(srcSentence, place, listener, intimacy);
+        GptPrompt gptPrompt = new GptPrompt(srcSentence, listener, intimacy);
+
+        // Chain of Responsibility 패턴 이용
+        PromptHandler school_handler = new PromptHandler_School();
+        PromptHandler online_handler = new PromptHandler_Online();
+        PromptHandler general_handler = new PromptHandler_General();
+        school_handler.setSuccessor(online_handler);
+        online_handler.setSuccessor(general_handler);
+
+        school_handler.handleRequest(gptPrompt, place);
+
         String system = gptPrompt.getSystem();
         String prompt = gptPrompt.getPrompt();
 
