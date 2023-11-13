@@ -18,6 +18,7 @@ import java.util.List;
 public class User {
 
     @Id
+    @Column(name = "user_id")
     private String userId;
 
     @Column
@@ -33,4 +34,8 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<LearningContent> learningContentList = new ArrayList<>();
+
+    public void addLearningContent(LearningContent learningContent){
+        this.learningContentList.add(learningContent);
+    }
 }

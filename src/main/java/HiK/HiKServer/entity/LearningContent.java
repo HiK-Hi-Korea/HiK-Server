@@ -24,7 +24,7 @@ public class LearningContent {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "learningContent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "learning_content", cascade = CascadeType.ALL)
     private List<Sentence> sentences = new ArrayList<>();
 
     public void setUser(User user){
