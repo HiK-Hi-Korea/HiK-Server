@@ -68,7 +68,7 @@ public class TranslationService {
         String listener = dto.getListener();
         int intimacy = dto.getIntimacy();
 
-        GptPrompt gptPrompt = new GptPrompt(srcSentence, listener, intimacy);
+        GptPrompt gptPrompt = new GptPrompt(srcSentence, place, listener, intimacy);
 
         // Chain of Responsibility 패턴 이용
         PromptHandler school_handler = new PromptHandler_School();
@@ -84,6 +84,7 @@ public class TranslationService {
 
         String targetSentence = createTargetSentence(system, prompt);
 
+        log.info("system: "+system, "\nprompt: "+prompt);
         log.info("target Sentece: "+targetSentence);
         if (targetSentence == null) {
             throw new IllegalStateException("chat gpt - generate sentence 실패!");
@@ -93,6 +94,7 @@ public class TranslationService {
         Long temp_id = null;
         Sentence sentence = new Sentence(temp_id, srcSentence, place, listener, intimacy, targetSentence, voiceFile);
         // DB에 저장
+        log.info("sentence test:"+sentence.getSentenceId() +" voiceFile: "+sentence.getVoiceFile()+" real: "+voiceFile);
         Sentence createdSentence = sentenceRepository.save(sentence);
 
         // 비슷한 시간대와 장소에서 생성된 sentence 찾고 LearningContent 업데이트 메소드 비동기 호출
@@ -118,6 +120,9 @@ public class TranslationService {
     }
 
     public String getTTS(String text) throws IOException {
+        if (text.length() >= 10){
+            text = text.substring(0,9);
+        }
         String filename = text+".mp3";
         String url;
         // Instantiates a client

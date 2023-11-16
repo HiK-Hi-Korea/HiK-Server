@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'HiK'
-version = '0.0.1-SNAPSHOT'
+version = 'inter-demo'
 
 java {
 	sourceCompatibility = '17'
