@@ -120,10 +120,11 @@ public class TranslationService {
     }
 
     public String getTTS(String text) throws IOException {
+        String file_text =text;
         if (text.length() >= 10){
-            text = text.substring(0,9);
+            file_text = file_text.substring(0,9);
         }
-        String filename = text+".mp3";
+        String filename = file_text+".mp3";
         String url;
         // Instantiates a client
         try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
