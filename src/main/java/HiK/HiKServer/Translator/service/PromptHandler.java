@@ -76,13 +76,13 @@ class PromptHandler_Online extends PromptHandler{
             "\n" +
             "[Example1]\n" +
             "<Input>\n" +
-            "sentence: \"How much is it?\"\n" +
+            "sentence: \"I want to meet you\"\n" +
             "Case 1) Filter - location: online-transaction, listener: buyer, intimacy: 1, 2, 3\n" +
             "<Output> \n" +
-            "\"얼마인가요?\"\n" +
+            "\"구매자님 만나서 거래하고 싶어요.\"\n" +
             "Case 2) Filter - location: online-transaction, listener: seller, intimacy: 1, 2, 3\n" +
             "<Output> \n" +
-            "\"얼마인가요?\"\n" +
+            "\"판매자님 만나서 거래하고 싶어요.\"\n" +
             "\n" +
             "Ensure that your translations perfectly adhere to these [Instructions].\n";
 
