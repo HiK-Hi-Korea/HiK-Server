@@ -35,6 +35,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<LearningContent> learningContentList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Sentence> sentenceList = new ArrayList<>();
+
     public void addLearningContent(LearningContent learningContent){
         this.learningContentList.add(learningContent);
     }

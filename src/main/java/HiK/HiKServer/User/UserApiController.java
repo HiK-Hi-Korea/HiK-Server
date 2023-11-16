@@ -17,5 +17,4 @@ public class UserApiController {
         List<LearningContent> learningContents = userService.getLearningContentsByUserId(userId);
         return ResponseEntity.ok(learningContents);
     }
-
 }
