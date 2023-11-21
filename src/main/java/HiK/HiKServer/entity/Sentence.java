@@ -1,28 +1,29 @@
 package HiK.HiKServer.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Getter
+@NoArgsConstructor
 @Table(name = "sentence")
 @Entity
 public class Sentence {
     @Id
+    @Column(name = "sentence_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sentenceId;
+    private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name="user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name="learning_content_id")
+    private LearningContent learningContent;
 
     @Column
     private String srcSentence;
@@ -46,12 +47,8 @@ public class Sentence {
     @Column
     private ZonedDateTime timestamp;
 
-    @ManyToOne
-    @JoinColumn(name = "learningContent_id")
-    private LearningContent learningContent;
-
     public Sentence(Long sentenceId, String srcSentence, String place, String listener, int intimacy, String translatedSentence, String voiceFile) {
-        this.sentenceId = sentenceId;
+        this.id = sentenceId;
         this.srcSentence = srcSentence;
         this.place = place;
         this.listener = listener;
