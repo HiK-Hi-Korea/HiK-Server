@@ -91,7 +91,7 @@ public class TranslationService {
         Long temp_id = null;
         Sentence sentence = new Sentence(temp_id, srcSentence, place, listener, intimacy, targetSentence, voiceFile);
         // DB에 저장
-        log.info("sentence test:"+sentence.getSentenceId() +" voiceFile: "+sentence.getVoiceFile()+" real: "+voiceFile);
+        log.info("sentence test:"+sentence.getId() +" voiceFile: "+sentence.getVoiceFile()+" real: "+voiceFile);
         Sentence createdSentence = sentenceRepository.save(sentence);
 
         // 비슷한 시간대와 장소에서 생성된 sentence 찾고 LearningContent 업데이트 메소드 비동기 호출
@@ -111,7 +111,7 @@ public class TranslationService {
         // 2-2. learningContent를 발견하지 못했으면, 새로운 learningContent를 생성하고 해당 learningContent의 Situation을 설정하기
         // 3. 생성한 learningContent에 방금 만든 문장 넣기
 
-        List<Sentence> similarSentences = sentenceRepository.findSimilarSentences(user.getUserId(), sentence.getPlace(), sentence.getTimestamp());
+        List<Sentence> similarSentences = sentenceRepository.findSimilarSentences(user.getId(), sentence.getPlace(), sentence.getTimestamp());
         // 비슷한 Sentence가 없으면 새 LearningContent 생성
         if (similarSentences.isEmpty()) {
             LearningContent learningContent = new LearningContent();
@@ -120,7 +120,7 @@ public class TranslationService {
             learningContentRepository.save(learningContent);
         } else {
             // 비슷한 Sentence가 있으면 해당 LearningContent에 추가
-            LearningContent learningContent = similarSentences.get(0).getLearningContent();
+            LearningContent learningContent = similarSentences.get(0).getLearning_content();
             learningContent.addSentence(sentence);
             learningContentRepository.save(learningContent);
         }

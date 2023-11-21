@@ -23,7 +23,7 @@ public class Sentence {
 
     @ManyToOne
     @JoinColumn(name="learning_content_id")
-    private LearningContent learningContent;
+    private LearningContent learning_content;
 
     @Column
     private String srcSentence;
