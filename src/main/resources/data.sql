@@ -1,3 +1,2 @@
-INSERT INTO article(title, content) VALUES('가가가가', '1111');
-INSERT INTO article(title, content) VALUES('나나나나', '2222');
-INSERT INTO article(title, content) VALUES('다다다다', '3333');
+INSERT INTO user(user_id, username, age, gender, nation, language) values('1', 'minki', 23, 'Female', 'Korea', 'English');
+INSERT INTO user(user_id, username, age, gender, nation, language) values('2', 'test', 25, 'Male', 'Korea', 'English');

@@ -3,16 +3,13 @@ package HiK.HiKServer.Translator.service;
 import HiK.HiKServer.LearningContents.repository.LearningContentRepository;
 import HiK.HiKServer.Translator.dto.TranslationForm;
 import HiK.HiKServer.Translator.repositroy.SentenceRepository;
-import HiK.HiKServer.User.UserRepository;
+import HiK.HiKServer.User.repository.UserRepository;
 import HiK.HiKServer.entity.LearningContent;
 import HiK.HiKServer.entity.Sentence;
 import HiK.HiKServer.entity.User;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -104,6 +101,16 @@ public class TranslationService {
 
     @Async
     public void updateLearningContentAsync(Sentence sentence, User user){
+        // 1. 같은 유저, 같은 장소, 같은 대상에서 생성된 learning Contents 가 있는지 확인.
+        // 이때 Situation 클래스를 learningContent 의 속성에 두고, 이 learningContent가 가지고 있는 Situation을 비교해서 찾기
+
+        // 2-1. learningContent를 발견했으면, 해당 learningContent의 마지막 문장이 생성된 시각이 현재 문장이 생성된 시간과 5분 이내로 차이가 나는지 확인하기
+        // 3-1. 만약 5분 이내이면 해당 learningContent에 문장 넣기
+        // 3-2. 5분을 벗어났으면, (1) 다른 Learning Content를 만들기 (2) 같은 learningContent에 넣지만, --- 와 같은 표시를 주기
+
+        // 2-2. learningContent를 발견하지 못했으면, 새로운 learningContent를 생성하고 해당 learningContent의 Situation을 설정하기
+        // 3. 생성한 learningContent에 방금 만든 문장 넣기
+
         List<Sentence> similarSentences = sentenceRepository.findSimilarSentences(user.getUserId(), sentence.getPlace(), sentence.getTimestamp());
         // 비슷한 Sentence가 없으면 새 LearningContent 생성
         if (similarSentences.isEmpty()) {
@@ -205,13 +212,4 @@ public class TranslationService {
 
         return answer;
     }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class ChatMessage{
-        private String role;
-        private String content;
-    }
-
 }
