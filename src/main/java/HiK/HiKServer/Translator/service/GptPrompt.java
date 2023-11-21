@@ -12,8 +12,8 @@ public class GptPrompt {
         return prompt;
     }
 
-    public GptPrompt(String srcSentence, String listener, int intimacy) {
-        this.prompt = makePrompt(srcSentence, listener, intimacy);
+    public GptPrompt(String srcSentence, String place, String listener, int intimacy) {
+        this.prompt = makePrompt(srcSentence, place, listener, intimacy);
     }
 
     public void setSystem(String system){
