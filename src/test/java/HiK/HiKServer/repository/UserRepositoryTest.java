@@ -20,7 +20,7 @@ public class UserRepositoryTest {
         List<User> all = userRepository.findAll();
         System.out.println("--------------------------");
         for(User user: all){
-            System.out.println(user.getUserId());
+            System.out.println(user.getId());
         }
         System.out.println("--------------------------");
 
