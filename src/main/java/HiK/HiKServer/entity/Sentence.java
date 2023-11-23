@@ -59,5 +59,6 @@ public class Sentence {
         this.intimacy = intimacy;
         this.translatedSentence = translatedSentence;
         this.voiceFile = voiceFile;
+        this.timestamp = LocalDateTime.now();
     }
 }
