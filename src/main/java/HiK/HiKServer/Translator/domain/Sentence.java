@@ -1,5 +1,7 @@
-package HiK.HiKServer.entity;
+package HiK.HiKServer.Translator.domain;
 
+import HiK.HiKServer.LearningContents.domain.LearningContent;
+import HiK.HiKServer.User.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;

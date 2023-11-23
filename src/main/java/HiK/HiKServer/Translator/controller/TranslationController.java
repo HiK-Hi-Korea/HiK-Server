@@ -1,7 +1,7 @@
 package HiK.HiKServer.Translator.controller;
 
 import HiK.HiKServer.Translator.dto.TranslationForm;
-import HiK.HiKServer.entity.Sentence;
+import HiK.HiKServer.Translator.domain.Sentence;
 import HiK.HiKServer.Translator.service.TranslationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

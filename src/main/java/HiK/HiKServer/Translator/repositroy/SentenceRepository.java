@@ -1,6 +1,6 @@
 package HiK.HiKServer.Translator.repositroy;
 
-import HiK.HiKServer.entity.Sentence;
+import HiK.HiKServer.Translator.domain.Sentence;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

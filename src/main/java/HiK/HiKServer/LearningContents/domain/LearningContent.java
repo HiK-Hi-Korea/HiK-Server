@@ -1,5 +1,7 @@
-package HiK.HiKServer.entity;
+package HiK.HiKServer.LearningContents.domain;
 
+import HiK.HiKServer.Translator.domain.Sentence;
+import HiK.HiKServer.User.domain.User;
 import lombok.Getter;
 import lombok.ToString;
 

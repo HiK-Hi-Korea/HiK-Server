@@ -1,8 +1,8 @@
-package HiK.HiKServer.User;
+package HiK.HiKServer.User.service;
 
 import HiK.HiKServer.User.repository.UserRepository;
-import HiK.HiKServer.entity.LearningContent;
-import HiK.HiKServer.entity.User;
+import HiK.HiKServer.LearningContents.domain.LearningContent;
+import HiK.HiKServer.User.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

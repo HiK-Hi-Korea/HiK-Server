@@ -1,7 +1,7 @@
 package HiK.HiKServer.repository;
 
 import HiK.HiKServer.User.repository.UserRepository;
-import HiK.HiKServer.entity.User;
+import HiK.HiKServer.User.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

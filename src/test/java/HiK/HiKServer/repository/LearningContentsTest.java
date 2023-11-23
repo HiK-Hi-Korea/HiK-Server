@@ -1,7 +1,7 @@
 package HiK.HiKServer.repository;
 
 import HiK.HiKServer.LearningContents.repository.LearningContentRepository;
-import HiK.HiKServer.entity.LearningContent;
+import HiK.HiKServer.LearningContents.domain.LearningContent;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
