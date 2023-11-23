@@ -1,10 +1,7 @@
 package HiK.HiKServer.User.domain;
 
 import HiK.HiKServer.LearningContents.domain.LearningContent;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -20,18 +17,48 @@ public class User {
 
     @Id
     private String id;
-
     private String email;
+
+    @Column(nullable = true)
     private String name;
+    @Column(nullable = true)
     private int age;
+    @Column(nullable = true)
     private String gender;
+    @Column(nullable = true)
     private String nation;
+    @Column(nullable = true)
     private String language;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<LearningContent> learningContentList = new ArrayList<>();
 
-//    // login
+    public User(String id, String email){
+        this.id = id;
+        this.email =email;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setNation(String nation) {
+        this.nation = nation;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    //    // login
 //    private String loginId;
 //    private String password;
 //    private UserRole role;

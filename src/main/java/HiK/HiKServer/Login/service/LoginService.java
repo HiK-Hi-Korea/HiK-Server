@@ -45,6 +45,18 @@ public class LoginService {
     private final GoogleOauth googleOauth;
     private final HttpServletResponse response;
 
+    public Optional<User> findUserByUserResource(UserResource userResource){
+        return userRepository.findById(userResource.getId());
+    }
+    public Optional<User> newUser(UserResource userResource){
+        log.info("newUser: 새로 가입하는 중인 유저(userResource) ={}", userResource);
+        User newUser = new User(userResource.getId(), userResource.getEmail());
+        log.info("newUser2 : 새로 가입하는 중인 유저(user) ={}", newUser);
+        userRepository.save(newUser);
+        log.info("user repository에 save 완료");
+        return Optional.of(newUser);
+    }
+
     public void request(String socialLoginType) throws IOException {
         String redirectURL;
         switch(socialLoginType){
@@ -58,7 +70,7 @@ public class LoginService {
         log.info("redirect URL = {}",redirectURL);
         response.sendRedirect(redirectURL);
     }
-    public void socialLogin(String code, String registrationId) {
+    public UserResource socialLogin(String code, String registrationId) {
         log.info("======================================================");
         String accessToken = getAccessToken(code, registrationId);
         JsonNode userResourceNode = getUserResource(accessToken, registrationId);
@@ -75,17 +87,12 @@ public class LoginService {
                 throw new RuntimeException("UNSUPPORTED SOCIAL TYPE");
             }
         }
-        // 이미 존재하는 email 일 경우 로그인
-        Optional<User> user = userRepository.findById(userResource.getId());
-        if (userRepository.existsById(userResource.getId())){
-
-        }
-        // 존재하지 않는 email일 경우 회원가입
 
         log.info("id = {}", userResource.getId());
         log.info("email = {}", userResource.getEmail());
         log.info("picture = {}", userResource.getPicture());
         log.info("======================================================");
+        return userResource;
     }
 
     private String getAccessToken(String authorizationCode, String registrationId) {
