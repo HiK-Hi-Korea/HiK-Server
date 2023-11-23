@@ -1,11 +1,11 @@
 package HiK.HiKServer.entity;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -43,9 +43,13 @@ public class Sentence {
     @Column
     private String voiceFile;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column
-    private ZonedDateTime timestamp;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    @Column
+//    private ZonedDateTime timestamp;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime timestamp;
 
     public Sentence(Long sentenceId, String srcSentence, String place, String listener, int intimacy, String translatedSentence, String voiceFile) {
         this.id = sentenceId;
@@ -55,6 +59,5 @@ public class Sentence {
         this.intimacy = intimacy;
         this.translatedSentence = translatedSentence;
         this.voiceFile = voiceFile;
-        timestamp = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 }

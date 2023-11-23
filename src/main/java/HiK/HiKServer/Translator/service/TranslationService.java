@@ -9,7 +9,6 @@ import HiK.HiKServer.entity.Sentence;
 import HiK.HiKServer.entity.User;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +21,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
