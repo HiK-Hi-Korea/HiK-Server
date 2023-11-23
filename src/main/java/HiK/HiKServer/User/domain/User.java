@@ -21,6 +21,7 @@ public class User {
     @Id
     private String id;
 
+    private String email;
     private String name;
     private int age;
     private String gender;

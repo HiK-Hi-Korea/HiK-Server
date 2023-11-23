@@ -8,5 +8,5 @@ import lombok.Setter;
 public class UserResource {
     String id;
     String email;
-    String nickname;
+    String picture;
 }
