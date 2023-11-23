@@ -1,9 +1,11 @@
-package HiK.HiKServer.entity;
+package HiK.HiKServer.LearningContents.domain;
 
-import jakarta.persistence.*;
+import HiK.HiKServer.Translator.domain.Sentence;
+import HiK.HiKServer.User.domain.User;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

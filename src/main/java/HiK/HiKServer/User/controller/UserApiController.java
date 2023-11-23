@@ -1,6 +1,7 @@
-package HiK.HiKServer.User;
+package HiK.HiKServer.User.controller;
 
-import HiK.HiKServer.entity.LearningContent;
+import HiK.HiKServer.LearningContents.domain.LearningContent;
+import HiK.HiKServer.User.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

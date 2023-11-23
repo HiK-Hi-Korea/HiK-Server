@@ -1,79 +1,123 @@
 package HiK.HiKServer.Login.service;
 
-import HiK.HiKServer.Login.dto.GoogleLoginResponse;
-import HiK.HiKServer.Login.dto.GoogleOAuthRequest;
+import HiK.HiKServer.Login.domain.GoogleOauth;
+import HiK.HiKServer.Login.domain.UserResource;
+import HiK.HiKServer.User.domain.User;
+import HiK.HiKServer.User.repository.UserRepository;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-@Slf4j
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
+
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class LoginService {
+    @Autowired
+    private UserRepository userRepository;
+    private final RestTemplate restTemplate = new RestTemplate();
+
     @Value("${google.client.id}")
-    private String googleClientId;
+    private String clientId;
 
     @Value("${google.client.secret}")
-    private String googleClientSecret;
+    private String clientSecret;
 
-    @Value("${google.auth.url}")
-    private String googleAuthUrl;
+    @Value("${google.redirect.uri}")
+    private String redirectUri;
 
-    @Value("${google.login.url}")
-    private String googleApiUrl;
+    @Value("${google.token.uri}")
+    private String tokenUri;
 
-    @Value("${google.redirect.url}")
-    private String googleRedirectUrl;
+    @Value("${google.resource.uri}")
+    private String resourceUri;
 
-    public void socialLogin(String code, String registrationId) {
-        System.out.println("code = " + code);
-        System.out.println("registrationId = " + registrationId);
+    private final GoogleOauth googleOauth;
+    private final HttpServletResponse response;
+
+    public Optional<User> findUserByUserResource(UserResource userResource){
+        return userRepository.findById(userResource.getId());
+    }
+    public Optional<User> newUser(UserResource userResource){
+        log.info("newUser: 새로 가입하는 중인 유저(userResource) ={}", userResource);
+        User newUser = new User(userResource.getId(), userResource.getEmail());
+        log.info("newUser2 : 새로 가입하는 중인 유저(user) ={}", newUser);
+        userRepository.save(newUser);
+        log.info("user repository에 save 완료");
+        return Optional.of(newUser);
     }
 
-    public String getGoogleLoginView(){
-        String reqUrl = googleApiUrl + "/o/oauth2/v2/auth?client_id=" + googleClientId + "&redirect_uri=" + googleRedirectUrl
-                + "&response_type=code&scope=email%20profile%20openid&access_type=offline";
+    public void request(String socialLoginType) throws IOException {
+        String redirectURL;
+        switch(socialLoginType){
+            case "google":{
+                redirectURL = googleOauth.getOauthRedirectURL();
+            }break;
+            default:{
+                throw new IllegalArgumentException("알 수 없는 소셜 로그인 형식입니다.");
+            }
+        }
+        log.info("redirect URL = {}",redirectURL);
+        response.sendRedirect(redirectURL);
+    }
+    public UserResource socialLogin(String code, String registrationId) {
+        log.info("======================================================");
+        String accessToken = getAccessToken(code, registrationId);
+        JsonNode userResourceNode = getUserResource(accessToken, registrationId);
+        log.info("userResourceNode = {}", userResourceNode);
+        UserResource userResource = new UserResource();
+        log.info("userResource = {}", userResource);
+        switch (registrationId) {
+            case "google": {
+                userResource.setId(userResourceNode.get("id").asText());
+                userResource.setEmail(userResourceNode.get("email").asText());
+                userResource.setPicture(userResourceNode.get("picture").asText());
+                break;
+            } default: {
+                throw new RuntimeException("UNSUPPORTED SOCIAL TYPE");
+            }
+        }
 
-        log.info("myLog-LoginUrl : {}",googleApiUrl);
-        log.info("myLog-ClientId : {}",googleClientId);
-        log.info("myLog-RedirectUrl : {}",googleRedirectUrl);
-
-        //1.reqUrl 구글로그인 창을 띄우고, 로그인 후 /login/oauth_google_check 으로 리다이렉션하게 한다.
-        return reqUrl;
+        log.info("id = {}", userResource.getId());
+        log.info("email = {}", userResource.getEmail());
+        log.info("picture = {}", userResource.getPicture());
+        log.info("======================================================");
+        return userResource;
     }
 
-    public String oauth_google_check(String authCode){
-        // 2. 구글에 등록된 HiK 설정 정보를 보내서 약속된 토큰을 받기 위한 객체 생성
-        GoogleOAuthRequest googleOAuthRequest = GoogleOAuthRequest
-                .builder()
-                .clientId(googleClientId)
-                .clientSecret(googleClientSecret)
-                .code(authCode)
-                .redirectUri(googleRedirectUrl)
-                .grantType("authorization_code")
-                .build();
-        RestTemplate restTemplate = new RestTemplate();
+    private String getAccessToken(String authorizationCode, String registrationId) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("code", authorizationCode);
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        params.add("redirect_uri", redirectUri);
+        params.add("grant_type", "authorization_code");
 
-        // 3. 토큰 요청
-        ResponseEntity<GoogleLoginResponse> apiResponse = restTemplate.postForEntity(googleAuthUrl + "/token", googleOAuthRequest, GoogleLoginResponse.class);
-        // 4. 받은 토큰을 토큰 객체에 저장
-        GoogleLoginResponse googleLoginResponse = apiResponse.getBody();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        log.info("google login responseBody {}",googleLoginResponse.toString());
+        HttpEntity entity = new HttpEntity(params, headers);
 
-        String googleToken = googleLoginResponse.getId_token();
+        ResponseEntity<JsonNode> responseNode = restTemplate.exchange(tokenUri, HttpMethod.POST, entity, JsonNode.class);
+        JsonNode accessTokenNode = responseNode.getBody();
+        return accessTokenNode.get("access_token").asText();
+    }
 
-        // 5. 받은 토큰을 구글에 보내 유저 정보를 얻는다.
-        String requestUrl = UriComponentsBuilder.fromHttpUrl(googleAuthUrl + "/tokeninfo").queryParam("id_token",googleToken).toUriString();
+    private JsonNode getUserResource(String accessToken, String registrationId) {
 
-        // 6. 허가된 토큰의 유저정보를 결과로 받는다.
-        String resultJson = restTemplate.getForObject(requestUrl, String.class);
-
-        log.info("구글 로그인 유저정보:\n" + resultJson);
-        return resultJson;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity entity = new HttpEntity(headers);
+        return restTemplate.exchange(resourceUri, HttpMethod.GET, entity, JsonNode.class).getBody();
     }
 }
