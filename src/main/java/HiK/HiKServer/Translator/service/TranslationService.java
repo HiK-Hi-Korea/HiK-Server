@@ -1,11 +1,10 @@
 package HiK.HiKServer.Translator.service;
 
+import HiK.HiKServer.LearningContents.domain.LearningContent;
 import HiK.HiKServer.LearningContents.repository.LearningContentRepository;
+import HiK.HiKServer.Translator.domain.Sentence;
 import HiK.HiKServer.Translator.dto.TranslationForm;
 import HiK.HiKServer.Translator.repositroy.SentenceRepository;
-import HiK.HiKServer.User.repository.UserRepository;
-import HiK.HiKServer.LearningContents.domain.LearningContent;
-import HiK.HiKServer.Translator.domain.Sentence;
 import HiK.HiKServer.User.domain.User;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
@@ -38,8 +37,6 @@ public class TranslationService {
     private SentenceRepository sentenceRepository;
     @Autowired
     private LearningContentRepository learningContentRepository;
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private S3UploadService s3UploadService;
@@ -57,9 +54,6 @@ public class TranslationService {
 
     @Transactional
     public Sentence translation(TranslationForm dto) throws IOException {
-//        User user = userRepository.findById(Long.parseLong(userId))
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
-
         String srcSentence = dto.getSourceSentence();
         String place = dto.getPlace();
         String listener = dto.getListener();
