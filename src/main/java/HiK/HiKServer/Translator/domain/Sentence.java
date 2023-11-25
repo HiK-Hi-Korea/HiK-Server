@@ -63,4 +63,7 @@ public class Sentence {
         this.voiceFile = voiceFile;
         this.timestamp = LocalDateTime.now();
     }
+    public void setLearning_content(LearningContent learningContent){
+        this.learning_content = learningContent;
+    }
 }

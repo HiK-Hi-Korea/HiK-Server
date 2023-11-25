@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@EnableAsync
 @PropertySource("classpath:apikey.properties")
 @Slf4j
 @Service
@@ -122,11 +124,13 @@ public class TranslationService {
             learningContent.addSentence(sentence);
             learningContent.setPlace(sentencePlace);
             learningContent.setListener(sentenceListener);
+            sentence.setLearning_content(learningContent);
             learningContentRepository.save(learningContent); // 새로운 learningContent니깐 db에 넣어주기
         } else {
             // 비슷한 Sentence가 있으면 해당 LearningContent에 추가
             learningContent.setTimestamp(sentenceTimestamp);
             learningContent.addSentence(sentence);
+            sentence.setLearning_content(learningContent);
             learningContentRepository.save(learningContent); // update해주기 -> 이게 맞는지 확인해야함.
         }
     }
