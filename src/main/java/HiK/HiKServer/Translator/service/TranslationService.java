@@ -25,6 +25,7 @@ import javax.transaction.Transactional;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -109,18 +110,24 @@ public class TranslationService {
         // 2-2. learningContent를 발견하지 못했으면, 새로운 learningContent를 생성하고 해당 learningContent의 Situation을 설정하기
         // 3. 생성한 learningContent에 방금 만든 문장 넣기
 
-        LearningContent learningContent = learningContentRepository.findSimilarContents(user.getId(), sentence.getPlace(), sentence.getListener(), sentence.getTimestamp(), sentence.getTimestamp().minusMinutes(5));
+        String sentencePlace = sentence.getPlace();
+        String sentenceListener = sentence.getListener();
+        LocalDateTime sentenceTimestamp = sentence.getTimestamp();
+        LearningContent learningContent = learningContentRepository.findSimilarContents(user.getId(), sentencePlace, sentenceListener, sentenceTimestamp, sentenceTimestamp.minusMinutes(5));
         // 비슷한 Sentence가 없으면 새 LearningContent 생성
         if (learningContent == null) {
             learningContent = new LearningContent();
             learningContent.setUser(user);
+            learningContent.setTimestamp(sentenceTimestamp);
             learningContent.addSentence(sentence);
-            learningContentRepository.save(learningContent);
+            learningContent.setPlace(sentencePlace);
+            learningContent.setListener(sentenceListener);
+            learningContentRepository.save(learningContent); // 새로운 learningContent니깐 db에 넣어주기
         } else {
             // 비슷한 Sentence가 있으면 해당 LearningContent에 추가
-            LearningContent learningContent = similarSentences.get(0).getLearning_content();
+            learningContent.setTimestamp(sentenceTimestamp);
             learningContent.addSentence(sentence);
-            learningContentRepository.save(learningContent);
+            learningContentRepository.save(learningContent); // update해주기 -> 이게 맞는지 확인해야함.
         }
     }
 
