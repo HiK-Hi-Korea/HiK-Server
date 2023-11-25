@@ -6,6 +6,7 @@ import HiK.HiKServer.Translator.domain.Sentence;
 import HiK.HiKServer.Translator.dto.TranslationForm;
 import HiK.HiKServer.Translator.repositroy.SentenceRepository;
 import HiK.HiKServer.User.domain.User;
+import HiK.HiKServer.User.repository.UserRepository;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,8 @@ public class TranslationService {
     private SentenceRepository sentenceRepository;
     @Autowired
     private LearningContentRepository learningContentRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private S3UploadService s3UploadService;
@@ -54,6 +57,7 @@ public class TranslationService {
 
     @Transactional
     public Sentence translation(TranslationForm dto) throws IOException {
+        User user = userRepository.findById(dto.getUserId()).orElseThrow();
         String srcSentence = dto.getSourceSentence();
         String place = dto.getPlace();
         String listener = dto.getListener();
@@ -89,7 +93,7 @@ public class TranslationService {
         Sentence createdSentence = sentenceRepository.save(sentence);
 
         // 비슷한 시간대와 장소에서 생성된 sentence 찾고 LearningContent 업데이트 메소드 비동기 호출
-        // updateLearningContentAsync(createdSentence, user);
+        updateLearningContentAsync(createdSentence, user);
         return createdSentence;
     }
 
@@ -105,10 +109,10 @@ public class TranslationService {
         // 2-2. learningContent를 발견하지 못했으면, 새로운 learningContent를 생성하고 해당 learningContent의 Situation을 설정하기
         // 3. 생성한 learningContent에 방금 만든 문장 넣기
 
-        List<Sentence> similarSentences = sentenceRepository.findSimilarSentences(user.getId(), sentence.getPlace(), sentence.getTimestamp());
+        LearningContent learningContent = learningContentRepository.findSimilarContents(user.getId(), sentence.getPlace(), sentence.getListener(), sentence.getTimestamp(), sentence.getTimestamp().minusMinutes(5));
         // 비슷한 Sentence가 없으면 새 LearningContent 생성
-        if (similarSentences.isEmpty()) {
-            LearningContent learningContent = new LearningContent();
+        if (learningContent == null) {
+            learningContent = new LearningContent();
             learningContent.setUser(user);
             learningContent.addSentence(sentence);
             learningContentRepository.save(learningContent);
