@@ -2,6 +2,8 @@ package HiK.HiKServer.LearningContents.domain;
 
 import HiK.HiKServer.Translator.domain.Sentence;
 import HiK.HiKServer.User.domain.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -21,10 +23,12 @@ public class LearningContent {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
 
     @ToString.Exclude
+    @JsonManagedReference
     @OneToMany(mappedBy = "learning_content", cascade = CascadeType.ALL)
     private List<Sentence> sentenceList = new ArrayList<>();
 

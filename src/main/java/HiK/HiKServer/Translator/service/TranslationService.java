@@ -59,8 +59,8 @@ public class TranslationService {
 
 
     @Transactional
-    public Sentence translation(TranslationForm dto) throws IOException {
-        User user = userRepository.findById(dto.getUserId()).orElseThrow();
+    public Sentence translation(String userId, TranslationForm dto) throws IOException {
+        User user = userRepository.findById(userId).orElseThrow();
         String srcSentence = dto.getSourceSentence();
         String place = dto.getPlace();
         String listener = dto.getListener();
@@ -90,13 +90,14 @@ public class TranslationService {
         // TTS 해서 voiceFile 받아오기 (파일 경로 반환)
         String voiceFile = getTTS(targetSentence);
         Long temp_id = null;
-        Sentence sentence = new Sentence(temp_id, srcSentence, place, listener, intimacy, targetSentence, voiceFile);
+        Sentence sentence = new Sentence(temp_id, user, srcSentence, place, listener, intimacy, targetSentence, voiceFile);
         // DB에 저장
         log.info("sentence test:"+sentence.getId() +" voiceFile: "+sentence.getVoiceFile()+" real: "+voiceFile);
         Sentence createdSentence = sentenceRepository.save(sentence);
 
         // 비슷한 시간대와 장소에서 생성된 sentence 찾고 LearningContent 업데이트 메소드 비동기 호출
         updateLearningContentAsync(createdSentence, user);
+        log.info("학습 컨텐츠까지 마무리 하고 sentence 반환직전");
         return createdSentence;
     }
 

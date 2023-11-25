@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -23,9 +20,11 @@ public class TranslationController {
     TranslationService translationService;
 
     @PostMapping("/trans")
-    public ResponseEntity<Sentence> translation(@RequestBody TranslationForm translationForm) throws IOException {
+    public ResponseEntity<Sentence> translation(@RequestHeader(name = "X-UserId") String userId, @RequestBody TranslationForm translationForm) throws IOException {
         log.info("translation 시작");
-        Sentence translatedSentence = translationService.translation(translationForm);
+        Sentence translatedSentence = translationService.translation(userId, translationForm);
+        if (translatedSentence != null) log.info("translation - translatedSentence" + translatedSentence.getTranslatedSentence());
+        else log.info("translatedSentence nulll!!!");
         return (translatedSentence != null) ? ResponseEntity.status(HttpStatus.OK).body(translatedSentence):
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
