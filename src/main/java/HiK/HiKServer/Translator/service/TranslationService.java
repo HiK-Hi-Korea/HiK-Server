@@ -1,12 +1,12 @@
 package HiK.HiKServer.Translator.service;
 
+import HiK.HiKServer.LearningContents.domain.LearningContent;
 import HiK.HiKServer.LearningContents.repository.LearningContentRepository;
+import HiK.HiKServer.Translator.domain.Sentence;
 import HiK.HiKServer.Translator.dto.TranslationForm;
 import HiK.HiKServer.Translator.repositroy.SentenceRepository;
-import HiK.HiKServer.User.repository.UserRepository;
-import HiK.HiKServer.LearningContents.domain.LearningContent;
-import HiK.HiKServer.Translator.domain.Sentence;
 import HiK.HiKServer.User.domain.User;
+import HiK.HiKServer.User.repository.UserRepository;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,11 +26,13 @@ import javax.transaction.Transactional;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@EnableAsync
 @PropertySource("classpath:apikey.properties")
 @Slf4j
 @Service
@@ -56,10 +59,8 @@ public class TranslationService {
 
 
     @Transactional
-    public Sentence translation(TranslationForm dto) throws IOException {
-//        User user = userRepository.findById(Long.parseLong(userId))
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
-
+    public Sentence translation(String userId, TranslationForm dto) throws IOException {
+        User user = userRepository.findById(userId).orElseThrow();
         String srcSentence = dto.getSourceSentence();
         String place = dto.getPlace();
         String listener = dto.getListener();
@@ -89,13 +90,14 @@ public class TranslationService {
         // TTS 해서 voiceFile 받아오기 (파일 경로 반환)
         String voiceFile = getTTS(targetSentence);
         Long temp_id = null;
-        Sentence sentence = new Sentence(temp_id, srcSentence, place, listener, intimacy, targetSentence, voiceFile);
+        Sentence sentence = new Sentence(temp_id, user, srcSentence, place, listener, intimacy, targetSentence, voiceFile);
         // DB에 저장
         log.info("sentence test:"+sentence.getId() +" voiceFile: "+sentence.getVoiceFile()+" real: "+voiceFile);
         Sentence createdSentence = sentenceRepository.save(sentence);
 
         // 비슷한 시간대와 장소에서 생성된 sentence 찾고 LearningContent 업데이트 메소드 비동기 호출
-        // updateLearningContentAsync(createdSentence, user);
+        updateLearningContentAsync(createdSentence, user);
+        log.info("학습 컨텐츠까지 마무리 하고 sentence 반환직전");
         return createdSentence;
     }
 
@@ -111,18 +113,26 @@ public class TranslationService {
         // 2-2. learningContent를 발견하지 못했으면, 새로운 learningContent를 생성하고 해당 learningContent의 Situation을 설정하기
         // 3. 생성한 learningContent에 방금 만든 문장 넣기
 
-        List<Sentence> similarSentences = sentenceRepository.findSimilarSentences(user.getId(), sentence.getPlace(), sentence.getTimestamp());
+        String sentencePlace = sentence.getPlace();
+        String sentenceListener = sentence.getListener();
+        LocalDateTime sentenceTimestamp = sentence.getTimestamp();
+        LearningContent learningContent = learningContentRepository.findSimilarContents(user.getId(), sentencePlace, sentenceListener, sentenceTimestamp, sentenceTimestamp.minusMinutes(5));
         // 비슷한 Sentence가 없으면 새 LearningContent 생성
-        if (similarSentences.isEmpty()) {
-            LearningContent learningContent = new LearningContent();
+        if (learningContent == null) {
+            learningContent = new LearningContent();
             learningContent.setUser(user);
+            learningContent.setTimestamp(sentenceTimestamp);
             learningContent.addSentence(sentence);
-            learningContentRepository.save(learningContent);
+            learningContent.setPlace(sentencePlace);
+            learningContent.setListener(sentenceListener);
+            sentence.setLearning_content(learningContent);
+            learningContentRepository.save(learningContent); // 새로운 learningContent니깐 db에 넣어주기
         } else {
             // 비슷한 Sentence가 있으면 해당 LearningContent에 추가
-            LearningContent learningContent = similarSentences.get(0).getLearning_content();
+            learningContent.setTimestamp(sentenceTimestamp);
             learningContent.addSentence(sentence);
-            learningContentRepository.save(learningContent);
+            sentence.setLearning_content(learningContent);
+            learningContentRepository.save(learningContent); // update해주기 -> 이게 맞는지 확인해야함.
         }
     }
 

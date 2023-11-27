@@ -1,7 +1,11 @@
 package HiK.HiKServer.User.domain;
 
 import HiK.HiKServer.LearningContents.domain.LearningContent;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -31,6 +35,7 @@ public class User {
     private String language;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<LearningContent> learningContentList = new ArrayList<>();
 
     public User(String id, String email){
