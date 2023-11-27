@@ -27,7 +27,7 @@ public class UserService {
         List<LearningContent> learningContentList = learningContentRepository.getByUserId(userId);
         List<LearningContentDto> learningContentDtos = new ArrayList<>();
         for(LearningContent learningContent : learningContentList){
-            learningContentDtos.add(new LearningContentDto(learningContent.getId(), learningContent.getPlace(), learningContent.getListener(), learningContent.getTimestamp(), learningContent.getSentenceList().get(0).getTranslatedSentence()));
+            learningContentDtos.add(new LearningContentDto(learningContent.getId(), learningContent.getPlace(), learningContent.getListener(), learningContent.getIntimacy(), learningContent.getTimestamp(), learningContent.getSentenceList().get(0).getTranslatedSentence()));
         }
         return learningContentDtos;
     }
