@@ -115,8 +115,9 @@ public class TranslationService {
 
         String sentencePlace = sentence.getPlace();
         String sentenceListener = sentence.getListener();
+        int sentenceIntimacy = sentence.getIntimacy();
         LocalDateTime sentenceTimestamp = sentence.getTimestamp();
-        LearningContent learningContent = learningContentRepository.findSimilarContents(user.getId(), sentencePlace, sentenceListener, sentenceTimestamp, sentenceTimestamp.minusMinutes(5));
+        LearningContent learningContent = learningContentRepository.findSimilarContents(user.getId(), sentencePlace, sentenceListener, sentenceIntimacy, sentenceTimestamp, sentenceTimestamp.minusMinutes(5));
         // 비슷한 Sentence가 없으면 새 LearningContent 생성
         if (learningContent == null) {
             learningContent = new LearningContent();
@@ -125,6 +126,7 @@ public class TranslationService {
             learningContent.addSentence(sentence);
             learningContent.setPlace(sentencePlace);
             learningContent.setListener(sentenceListener);
+            learningContent.setIntimacy(sentenceIntimacy);
             sentence.setLearning_content(learningContent);
             learningContentRepository.save(learningContent); // 새로운 learningContent니깐 db에 넣어주기
         } else {

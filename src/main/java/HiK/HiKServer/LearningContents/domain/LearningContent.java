@@ -34,6 +34,7 @@ public class LearningContent {
 
     private String place;
     private String listener;
+    private int intimacy;
     private LocalDateTime timestamp;
 
     public void addSentence(Sentence sentence) {
@@ -50,4 +51,5 @@ public class LearningContent {
     public void setListener(String listener) {
         this.listener = listener;
     }
+    public void setIntimacy(int intimacy){ this.intimacy =intimacy;}
 }

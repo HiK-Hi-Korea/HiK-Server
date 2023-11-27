@@ -11,6 +11,7 @@ public class LearningContentDto {
     private Long id;
     private String place;
     private String listener;
+    private int intimacy;
     private LocalDateTime timestamp;
     private String mainSentence;
 }
