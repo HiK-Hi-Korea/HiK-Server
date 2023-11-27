@@ -1,6 +1,7 @@
 package HiK.HiKServer.User.controller;
 
 import HiK.HiKServer.LearningContents.domain.LearningContent;
+import HiK.HiKServer.LearningContents.dto.LearningContentDto;
 import HiK.HiKServer.User.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,16 @@ public class UserApiController {
         return (learningContentList != null) ? ResponseEntity.status(HttpStatus.OK).body(learningContentList):
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
+
+    @GetMapping("/user/showListDto")
+    public ResponseEntity<List<LearningContentDto>> showUserContentListDto(@RequestHeader(name = "X-UserId") String userId){
+        log.info("show user content list 시작!");
+        List<LearningContentDto> learningContentDtos = userService.getUserContentDtoList(userId);
+        log.info("존재하는 컨텐츠 : "+learningContentDtos.get(0).toString());
+        return (learningContentDtos != null) ? ResponseEntity.status(HttpStatus.OK).body(learningContentDtos):
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
     @GetMapping("/{userId}/learning-contents")
     public ResponseEntity<List<LearningContent>> getLearningContentsByUserId(@PathVariable String userId) {
         List<LearningContent> learningContents = userService.getLearningContentsByUserId(userId);
