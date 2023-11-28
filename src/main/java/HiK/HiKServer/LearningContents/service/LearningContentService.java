@@ -72,8 +72,11 @@ public class LearningContentService {
         String input_listener = requestDto.getInput_listener();
         int input_intimacy = requestDto.getInput_intimacy();
         String translated_sentence = requestDto.getTranslated_sentence();
+        String place = requestDto.getPlace();
+        String listener = requestDto.getListener();
+        int intimacy = requestDto.getIntimacy();
 
-        GptPrompt_Learning gptPrompt_reason = new GptPrompt_Learning(input_sentence, input_place, input_listener, input_intimacy, translated_sentence);
+        GptPrompt_Learning gptPrompt_reason = new GptPrompt_Learning(input_sentence, input_place, input_listener, input_intimacy, translated_sentence, place, listener, intimacy);
         String system = gptPrompt_reason.getSystem();
         String prompt = gptPrompt_reason.getPrompt();
 
