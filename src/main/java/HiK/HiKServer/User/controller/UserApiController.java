@@ -7,12 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -38,9 +36,30 @@ public class UserApiController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    @GetMapping("/{userId}/learning-contents")
-    public ResponseEntity<List<LearningContent>> getLearningContentsByUserId(@PathVariable String userId) {
-        List<LearningContent> learningContents = userService.getLearningContentsByUserId(userId);
-        return ResponseEntity.ok(learningContents);
+//    @GetMapping("/{userId}/learning-contents")
+//    public ResponseEntity<List<LearningContent>> getLearningContentsByUserId(@PathVariable String userId) {
+//        List<LearningContent> learningContents = userService.getLearningContentsByUserId(userId);
+//        return ResponseEntity.ok(learningContents);
+//    }
+
+    @PutMapping("/user/setAge")
+    public void setUserAge(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String, Integer> ageMap){
+        log.info("set user age!");
+        userService.setUserAge(userId, ageMap.get("age"));
+    }
+    @PutMapping("/user/setNation")
+    public void setUserNation(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String, String> nationMap){
+        log.info("set user nation!");
+        userService.setUserNation(userId, nationMap.get("nation"));
+    }
+    @PutMapping("/user/setLanguage")
+    public void setUserLanguage(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String,String> languageMap){
+        log.info("set user language!");
+        userService.setUserLanguage(userId, languageMap.get("language"));
+    }
+    @PutMapping("/user/setGender")
+    public void setUserGender(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String,String> genderMap){
+        log.info("set user gender!");
+        userService.setUserGender(userId, genderMap.get("gender"));
     }
 }
