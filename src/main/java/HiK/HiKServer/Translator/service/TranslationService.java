@@ -69,9 +69,11 @@ public class TranslationService {
         GptPrompt gptPrompt = new GptPrompt(srcSentence, place, listener, intimacy);
 
         // Chain of Responsibility 패턴 이용
+        PromptHandler university_handler = new PromptHandler_Universty();
         PromptHandler school_handler = new PromptHandler_School();
         PromptHandler online_handler = new PromptHandler_Online();
         PromptHandler general_handler = new PromptHandler_General();
+        university_handler.setSuccessor(school_handler);
         school_handler.setSuccessor(online_handler);
         online_handler.setSuccessor(general_handler);
 
