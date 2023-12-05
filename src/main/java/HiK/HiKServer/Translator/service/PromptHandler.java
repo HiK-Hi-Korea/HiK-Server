@@ -11,9 +11,24 @@ abstract class PromptHandler {
 
     public abstract void handleRequest(GptPrompt gptPrompt, String request);
 }
+class PromptHandler_Universty extends PromptHandler{
+    String[] university_set = {"university",  "college",};
+    String university_system = "";
+
+    @Override
+    public void handleRequest(GptPrompt gptPrompt, String request) {
+        boolean isExist = Arrays.stream(university_set).anyMatch(request::equals);
+        if (isExist){
+            gptPrompt.setSystem(university_system);
+        }
+        else if (successor != null){
+            successor.handleRequest(gptPrompt, request);
+        }
+    }
+}
 
 class PromptHandler_School extends PromptHandler{
-    String[] school_set = {"school", "university",  "college", "high school", "middle school", "primary school"};
+    String[] school_set = {"school", "high school", "middle school", "primary school"};
     String school_system = "You are an AI assistant specializing in English to Korean translation and Korean Style Translation. Your task consists of two steps.\n" +
             "The first step is to translate the given sentences into Korean. And the next step is to translate the sentence translated in the first step according to the listener and intimacy.\n" +
             "The process of two steps follows the [Instruction] below.\n" +
