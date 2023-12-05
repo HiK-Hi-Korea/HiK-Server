@@ -34,25 +34,33 @@ public class UserService {
         return learningContentDtos;
     }
 
-    public void setUserAge(String userId, int age){
+    public User setUserAge(String userId, int age){
         User user = userRepository.findById(userId).orElseThrow();
         user.setAge(age);
-        log.info("user set age: ", user.getAge());
+        userRepository.save(user);
+        log.info("input age: " +age +", user set age: ", user.getAge());
+        return user;
     }
-    public void setUserNation(String userId, String nation){
+    public User setUserNation(String userId, String nation){
         User user = userRepository.findById(userId).orElseThrow();
         user.setNation(nation);
-        log.info("user set nation: ", user.getNation());
+        userRepository.save(user);
+        log.info("input nation: " +nation +", user set nation: ", user.getNation());
+        return user;
     }
-    public void setUserLanguage(String userId, String language){
+    public User setUserLanguage(String userId, String language){
         User user = userRepository.findById(userId).orElseThrow();
         user.setLanguage(language);
-        log.info("user set language: ", user.getLanguage());
+        userRepository.save(user);
+        log.info("input language: " +language +", user set language: ", user.getLanguage());
+        return user;
     }
-    public void setUserGender(String userId, String gender){
+    public User setUserGender(String userId, String gender){
         User user = userRepository.findById(userId).orElseThrow();
         user.setGender(gender);
-        log.info("user set gender: ", user.getGender());
+        userRepository.save(user);
+        log.info("input gender: " +gender +", user set gender: ", user.getGender());
+        return user;
     }
 //    public List<LearningContent> getLearningContentsByUserId(String userId) {
 //        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));

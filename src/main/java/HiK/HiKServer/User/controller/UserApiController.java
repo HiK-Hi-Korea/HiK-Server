@@ -2,6 +2,7 @@ package HiK.HiKServer.User.controller;
 
 import HiK.HiKServer.LearningContents.domain.LearningContent;
 import HiK.HiKServer.LearningContents.dto.LearningContentDto;
+import HiK.HiKServer.User.domain.User;
 import HiK.HiKServer.User.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,23 +44,31 @@ public class UserApiController {
 //    }
 
     @PutMapping("/user/setAge")
-    public void setUserAge(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String, Integer> ageMap){
+    public ResponseEntity<User> setUserAge(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String, Integer> ageMap){
         log.info("set user age!");
-        userService.setUserAge(userId, ageMap.get("age"));
+        User user = userService.setUserAge(userId, ageMap.get("age"));
+        return (user != null) ? ResponseEntity.status(HttpStatus.OK).body(user):
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
     @PutMapping("/user/setNation")
-    public void setUserNation(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String, String> nationMap){
+    public ResponseEntity<User> setUserNation(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String, String> nationMap){
         log.info("set user nation!");
-        userService.setUserNation(userId, nationMap.get("nation"));
+        User user = userService.setUserNation(userId, nationMap.get("nation"));
+        return (user != null) ? ResponseEntity.status(HttpStatus.OK).body(user):
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
     @PutMapping("/user/setLanguage")
-    public void setUserLanguage(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String,String> languageMap){
+    public ResponseEntity<User> setUserLanguage(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String,String> languageMap){
         log.info("set user language!");
-        userService.setUserLanguage(userId, languageMap.get("language"));
+        User user = userService.setUserLanguage(userId, languageMap.get("language"));
+        return (user != null) ? ResponseEntity.status(HttpStatus.OK).body(user):
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
     @PutMapping("/user/setGender")
-    public void setUserGender(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String,String> genderMap){
+    public ResponseEntity<User> setUserGender(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String,String> genderMap){
         log.info("set user gender!");
-        userService.setUserGender(userId, genderMap.get("gender"));
+        User user = userService.setUserGender(userId, genderMap.get("gender"));
+        return (user != null) ? ResponseEntity.status(HttpStatus.OK).body(user):
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }

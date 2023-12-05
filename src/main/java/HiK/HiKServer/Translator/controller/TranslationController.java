@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @Slf4j
-@CrossOrigin(origins = "http://13.125.89.24:8080")
+@CrossOrigin(origins = "http://15.164.210.1:8080")
 @RestController
 public class TranslationController {
 
