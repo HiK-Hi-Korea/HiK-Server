@@ -33,7 +33,13 @@ public class UserService {
         }
         return learningContentDtos;
     }
-
+    public User setUserName(String userId, String name){
+        User user = userRepository.findById(userId).orElseThrow();
+        user.setName(name);
+        userRepository.save(user);
+        log.info("input age: " +name +", user set age: ", user.getName());
+        return user;
+    }
     public User setUserAge(String userId, int age){
         User user = userRepository.findById(userId).orElseThrow();
         user.setAge(age);

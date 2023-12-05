@@ -61,12 +61,13 @@ public class TranslationService {
     @Transactional
     public Sentence translation(String userId, TranslationForm dto) throws IOException {
         User user = userRepository.findById(userId).orElseThrow();
+        int userAge = user.getAge();
         String srcSentence = dto.getSourceSentence();
         String place = dto.getPlace();
         String listener = dto.getListener();
         int intimacy = dto.getIntimacy();
 
-        GptPrompt gptPrompt = new GptPrompt(srcSentence, place, listener, intimacy);
+        GptPrompt gptPrompt = new GptPrompt(userAge, srcSentence, place, listener, intimacy);
 
         // Chain of Responsibility 패턴 이용
         PromptHandler university_handler = new PromptHandler_Universty();
@@ -77,7 +78,7 @@ public class TranslationService {
         school_handler.setSuccessor(online_handler);
         online_handler.setSuccessor(general_handler);
 
-        school_handler.handleRequest(gptPrompt, place);
+        university_handler.handleRequest(gptPrompt, place, listener);
 
         String system = gptPrompt.getSystem();
         String prompt = gptPrompt.getPrompt();
