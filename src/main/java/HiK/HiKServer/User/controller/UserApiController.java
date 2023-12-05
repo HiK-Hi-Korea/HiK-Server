@@ -43,6 +43,14 @@ public class UserApiController {
 //        return ResponseEntity.ok(learningContents);
 //    }
 
+    @PutMapping("/user/setName")
+    public ResponseEntity<User> setUserName(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String, String> nameMap){
+        log.info("set user name!");
+        User user = userService.setUserName(userId, nameMap.get("name"));
+        return (user != null) ? ResponseEntity.status(HttpStatus.OK).body(user):
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+    
     @PutMapping("/user/setAge")
     public ResponseEntity<User> setUserAge(@RequestHeader(name = "X-UserId") String userId, @RequestBody Map<String, Integer> ageMap){
         log.info("set user age!");
