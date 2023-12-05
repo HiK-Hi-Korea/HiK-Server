@@ -9,4 +9,7 @@ public class ReasonRequestDto {
    String input_listener;
    int input_intimacy;
    String translated_sentence;
+   String place;
+   String listener;
+   int intimacy;
 }
