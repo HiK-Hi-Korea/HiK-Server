@@ -16,12 +16,12 @@ public class GptPrompt_Learning {
 
     private String makeReasonPrompt(String input_sentence, String input_place, String input_listener, int input_intimacy,
                                     String translated_sentence, String place, String listener, int intimacy){
-        String prompt = "Explain how the input sentence was translated into translated sentense based on the location, listener and intimacy of the input filter and the filter used in the translation. Print out your answer in less than 500 characters. The input sentence, translated sentence, and filters used are as follows."
-                +"\n<Input>"+
-                "\nInput_Sentence: "+input_sentence+
-        "\nInput__Filter - input_location: "+input_place+", input_listener: "+input_listener+", input_intimacy: "+input_intimacy+
-        "\nTranslated_Sentence: "+translated_sentence+
-        "\nFilter - location: "+place+", listener: "+listener+", intimacy: "+intimacy;
+        String prompt = "Explain how the input sentence was translated into translated sentense based on the location, listener and intimacy of the input filter and the filter used in the translation. Print out your answer in less than 500 characters. The input sentence, translated sentence, and filters used are as follows.\n" +
+                "<Input>\n" +
+                "Input_Sentence: "+input_sentence+"\n" +
+                "Input__Filter - input_location: "+input_place+", input_listener: "+input_listener+", input_intimacy: "+input_intimacy+"\n" +
+                "Translated_Sentence: "+translated_sentence+"\n" +
+                "Filter - location: "+place+", listener: "+listener+", intimacy: "+intimacy;
 
         return prompt;
     }
@@ -61,12 +61,24 @@ public class GptPrompt_Learning {
                 "\n" +
                 "[Example1]\n" +
                 "<Input>\n" +
-                "Input_Sentence: \"사랑합니다.\"\n" +
-                "Input__Filter - input_location: university, input_listener: professor, input_intimacy: 1\n" +
-                "Translated_Sentence: \"사랑해\"\n" +
+                "Input_Sentence: \"나는 너를 사랑한다.\"\n" +
+                "Input__Filter - input_location: university, input_listener: student, input_intimacy: 1\n" +
+                "Translated_Sentence: \"난 널 사랑해\"\n" +
                 "Filter - location: online-chatting, listener: friend, intimacy: 3\n" +
                 "<Output> \n" +
-                "\"한국어에서 \"합니다\"와 \"해\"는 존댓말과 반말의 차이를 나타냅니다. \"합니다\"는 공손한 표현으로 교수님과 같은 상황에서 사용되며, \"해\"는 반말로 더 친밀한 친구나 가족과의 대화에서 쓰입니다. \"사랑합니다\"는 공손한 표현으로 교수님에게, \"사랑해\"는 반말로 친구에게 사용된 것이며, 이는 한국어의 존댓말과 반말의 관습에 따른 선택입니다.\"\n" +
+                "\"The transition from \"나는 너를 사랑한다\" to \"난 널 사랑해\" involves a change in speech level. The key difference lies in the choice between formal and informal language.\n" +
+                "\n" +
+                "나는 너를 사랑한다 (Formal):\n" +
+                "\n" +
+                "\"나는\" serves as the subject, meaning \"I,\" and \"너를\" represents \"you\" as the object.\n" +
+                "\"사랑한다\" is the verb expressing the action of loving, presented in a polite form.\n" +
+                "This sentence is a polite expression conveying one's feelings to the other person respectfully.\n" +
+                "난 널 사랑해 (Informal):\n" +
+                "\n" +
+                "\"난\" functions as the subject, meaning \"I,\" and \"널\" is the contracted form representing \"you\" as the object.\n" +
+                "\"사랑해\" is the verb expressing the action of loving, presented in an informal, more intimate form.\n" +
+                "This sentence is used in situations where there is a close relationship, and informal language is appropriate.\n" +
+                "The choice of speech level depends on the relationship and context between the speaker and the listener. Formal language is more courteous and polite, while informal language is used in more familiar and close relationships. The decision on which expression to use is influenced by the specific dynamics of the conversation and the relationship with the other person.\"\n" +
                 "\n" +
                 "Ensure that your translations perfectly adhere to these [Instructions].\n";
     }
