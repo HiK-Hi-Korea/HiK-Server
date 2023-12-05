@@ -9,20 +9,20 @@ abstract class PromptHandler {
         this.successor = successor;
     }
 
-    public abstract void handleRequest(GptPrompt gptPrompt, String request);
+    public abstract void handleRequest(GptPrompt gptPrompt, String request_place, String request_listener);
 }
 class PromptHandler_Universty extends PromptHandler{
     String[] university_set = {"university",  "college",};
     String university_system = "";
 
     @Override
-    public void handleRequest(GptPrompt gptPrompt, String request) {
-        boolean isExist = Arrays.stream(university_set).anyMatch(request::equals);
+    public void handleRequest(GptPrompt gptPrompt, String request_place, String request_listener) {
+        boolean isExist = Arrays.stream(university_set).anyMatch(request_place::equals);
         if (isExist){
             gptPrompt.setSystem(university_system);
         }
         else if (successor != null){
-            successor.handleRequest(gptPrompt, request);
+            successor.handleRequest(gptPrompt, request_place, request_listener);
         }
     }
 }
@@ -60,19 +60,19 @@ class PromptHandler_School extends PromptHandler{
             "\n" +
             "Ensure that your translations perfectly adhere to these [Instructions].\n";
 
-    public void handleRequest(GptPrompt gptPrompt, String request){
-        boolean isExist = Arrays.stream(school_set).anyMatch(request::equals);
+    public void handleRequest(GptPrompt gptPrompt, String request_place, String request_listener){
+        boolean isExist = Arrays.stream(school_set).anyMatch(request_place::equals);
         if (isExist){
             gptPrompt.setSystem(school_system);
         }
         else if (successor != null){
-            successor.handleRequest(gptPrompt, request);
+            successor.handleRequest(gptPrompt, request_place, request_listener);
         }
     }
 }
 
 class PromptHandler_Online extends PromptHandler{
-    String[] online_set = {"online-transaction", "online-chatting", "online transaction", "online chatting"};
+//    String[] online_set = {"online-transaction", "online-chatting", "online transaction", "online chatting"};
     String online_system = "You are an AI assistant specializing in English to Korean translation and Korean Style Translation. Your task consists of two steps.\n" +
             "The first step is to translate the given sentences into Korean. And the next step is to translate the sentence translated in the first step according to the listener and intimacy. \n" +
             "The process of two steps follows the [Instruction] below.\n" +
@@ -101,19 +101,22 @@ class PromptHandler_Online extends PromptHandler{
             "\n" +
             "Ensure that your translations perfectly adhere to these [Instructions].\n";
 
-    public void handleRequest(GptPrompt gptPrompt, String request){
-        boolean isExist = Arrays.stream(online_set).anyMatch(request::equals);
+    public void handleRequest(GptPrompt gptPrompt, String request_place, String request_listener){
+        boolean isExist= false;
+//        isExist = Arrays.stream(online_set).anyMatch(request_place::equals);
+        if (request_place.equals("online") && (request_listener.equals("seller") || request_listener.equals("buyer")))
+            isExist = true;
         if (isExist){
             gptPrompt.setSystem(online_system);
         }
         else if (successor != null){
-            successor.handleRequest(gptPrompt, request);
+            successor.handleRequest(gptPrompt, request_place, request_listener);
         }
     }
 }
 
 class PromptHandler_General extends PromptHandler{
-    String[] general_set = {""};
+//    String[] general_set = {""};
     String general_system ="You are an AI assistant specializing in English to Korean translation and Korean Style Translation. Your task consists of two steps.\n" +
             "The first step is to translate the given sentences into Korean. And the next step is to translate the sentence translated in the first step according to the listener and intimacy.\n" +
             "The process of two steps follows the [Instruction] below.\n" +
@@ -141,12 +144,12 @@ class PromptHandler_General extends PromptHandler{
             "\n" +
             "Ensure that your translations perfectly adhere to these [Instructions].\n";
 
-    public void handleRequest(GptPrompt gptPrompt, String request){
+    public void handleRequest(GptPrompt gptPrompt, String request_place, String request_listener){
         if (true){
             gptPrompt.setSystem(general_system);
         }
         else if (successor != null){
-            successor.handleRequest(gptPrompt, request);
+            successor.handleRequest(gptPrompt, request_place, request_listener);
         }
     }
 }

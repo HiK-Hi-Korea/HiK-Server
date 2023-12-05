@@ -78,7 +78,7 @@ public class TranslationService {
         school_handler.setSuccessor(online_handler);
         online_handler.setSuccessor(general_handler);
 
-        school_handler.handleRequest(gptPrompt, place);
+        university_handler.handleRequest(gptPrompt, place, listener);
 
         String system = gptPrompt.getSystem();
         String prompt = gptPrompt.getPrompt();
