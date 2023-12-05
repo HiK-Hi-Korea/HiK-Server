@@ -36,6 +36,9 @@ public class LoginService {
     @Value("${google.redirect.uri}")
     private String redirectUri;
 
+    @Value("${google.local.redirect.uri}")
+    private String localRedirectUri;
+
     @Value("${google.token.uri}")
     private String tokenUri;
 
