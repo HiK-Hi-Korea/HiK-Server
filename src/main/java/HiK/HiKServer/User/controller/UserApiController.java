@@ -2,6 +2,7 @@ package HiK.HiKServer.User.controller;
 
 import HiK.HiKServer.LearningContents.domain.LearningContent;
 import HiK.HiKServer.LearningContents.dto.LearningContentDto;
+import HiK.HiKServer.User.UserDto;
 import HiK.HiKServer.User.domain.User;
 import HiK.HiKServer.User.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,13 @@ import java.util.Map;
 public class UserApiController {
     @Autowired
     private UserService userService;
-
+    @GetMapping("/user/info")
+    public ResponseEntity<UserDto> getUserInfo(@RequestHeader(name = "X-UserId") String userId){
+        log.info("get user info!");
+        UserDto userDto = userService.getUserInfo(userId);
+        return (userDto != null) ? ResponseEntity.status(HttpStatus.OK).body(userDto):
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
     @GetMapping("/user/showList")
     public ResponseEntity<List<LearningContent>> showUserContentList(@RequestHeader(name = "X-UserId") String userId){
         log.info("show user content list 시작!");

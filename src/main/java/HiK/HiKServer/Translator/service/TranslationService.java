@@ -73,11 +73,13 @@ public class TranslationService {
         // Chain of Responsibility 패턴 이용
         PromptHandler university_handler = new PromptHandler_Universty();
         PromptHandler school_handler = new PromptHandler_School();
-        PromptHandler online_handler = new PromptHandler_Online();
+        PromptHandler online_transaction_handler = new PromptHandler_OnlineTransaction();
+        PromptHandler online_chatting_handler = new PromptHandler_OnlineChatting();
         PromptHandler general_handler = new PromptHandler_General();
         university_handler.setSuccessor(school_handler);
-        school_handler.setSuccessor(online_handler);
-        online_handler.setSuccessor(general_handler);
+        school_handler.setSuccessor(online_transaction_handler);
+        online_transaction_handler.setSuccessor(online_chatting_handler);
+        online_chatting_handler.setSuccessor(general_handler);
 
         university_handler.handleRequest(gptPrompt, place, listener);
 

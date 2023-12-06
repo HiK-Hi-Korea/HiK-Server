@@ -6,7 +6,7 @@ public class GptPrompt {
 
     public GptPrompt() {}
 
-    private String makePrompt(int userAge, String srcSentence, String place, String listener, int intimacy){
+    private String makePrompt(String srcSentence, String place, String listener, int intimacy){
         if (place.equals("online") && (listener.equals("seller") || listener.equals("buyer")))
             place = "online-transaction";
         String prompt = "Transfer the style of the sentence according to the listener and intimacy below:\n"+
@@ -17,7 +17,7 @@ public class GptPrompt {
     }
 
     public GptPrompt(int userAge, String srcSentence, String place, String listener, int intimacy) {
-        this.prompt = makePrompt(userAge, srcSentence, place, listener, intimacy);
+        this.prompt = makePrompt(srcSentence, place, listener, intimacy);
     }
 
     public void setSystem(String system){

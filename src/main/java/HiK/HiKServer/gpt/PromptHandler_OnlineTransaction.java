@@ -1,6 +1,6 @@
 package HiK.HiKServer.gpt;
 
-public class PromptHandler_Online extends PromptHandler {
+public class PromptHandler_OnlineTransaction extends PromptHandler {
     //    String[] online_set = {"online-transaction", "online-chatting", "online transaction", "online chatting"};
     String online_system = "You are an AI assistant specializing in English to Korean translation and Korean Style Translation. Your task consists of two steps.\n" +
             "The first step is to translate the given sentences into Korean. And the next step is to translate the sentence translated in the first step according to the listener and intimacy. \n" +
@@ -32,7 +32,6 @@ public class PromptHandler_Online extends PromptHandler {
 
     public void handleRequest(GptPrompt gptPrompt, String request_place, String request_listener) {
         boolean isExist = false;
-//        isExist = Arrays.stream(online_set).anyMatch(request_place::equals);
         if (request_place.equals("online") && (request_listener.equals("seller") || request_listener.equals("buyer")))
             isExist = true;
         if (isExist) {

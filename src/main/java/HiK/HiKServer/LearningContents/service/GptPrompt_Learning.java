@@ -85,7 +85,7 @@ public class GptPrompt_Learning extends GptPrompt {
                 "This sentence is used in situations where there is a close relationship, and informal language is appropriate.\n" +
                 "The choice of speech level depends on the relationship and context between the speaker and the listener. Formal language is more courteous and polite, while informal language is used in more familiar and close relationships. The decision on which expression to use is influenced by the specific dynamics of the conversation and the relationship with the other person.\"\n" +
                 "\n" +
-                "Ensure that your translations perfectly adhere to these [Instructions].\n";
+                "Ensure that your translations perfectly adhere to these [Instructions].";
     }
 
     public GptPrompt_Learning(String srcSentence, String place, String listener, int intimacy){
