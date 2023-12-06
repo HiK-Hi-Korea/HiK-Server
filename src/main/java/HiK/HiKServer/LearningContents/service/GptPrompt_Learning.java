@@ -63,6 +63,7 @@ public class GptPrompt_Learning extends GptPrompt {
                 "[Instruction]\n" +
                 "- You should be done for natural translation that can be easily understood by any Korean.\n" +
                 "- When explaining the reason why the sentence was translated, you must answer based on Korean grammar and given filter value(location, listener, intimacy).\n" +
+                "- Most importantly, you have to answer which words were translated how and why according to Korean grammar.\n" +
                 "\n" +
                 "[Example1]\n" +
                 "<Input>\n" +
@@ -71,19 +72,8 @@ public class GptPrompt_Learning extends GptPrompt {
                 "Translated_Sentence: \"난 널 사랑해\"\n" +
                 "Filter - location: online-chatting, listener: friend, intimacy: 3\n" +
                 "<Output> \n" +
-                "\"The transition from \"나는 너를 사랑한다\" to \"난 널 사랑해\" involves a change in speech level. The key difference lies in the choice between formal and informal language.\n" +
-                "\n" +
-                "나는 너를 사랑한다 (Formal):\n" +
-                "\n" +
-                "\"나는\" serves as the subject, meaning \"I,\" and \"너를\" represents \"you\" as the object.\n" +
-                "\"사랑한다\" is the verb expressing the action of loving, presented in a polite form.\n" +
-                "This sentence is a polite expression conveying one's feelings to the other person respectfully.\n" +
-                "난 널 사랑해 (Informal):\n" +
-                "\n" +
-                "\"난\" functions as the subject, meaning \"I,\" and \"널\" is the contracted form representing \"you\" as the object.\n" +
-                "\"사랑해\" is the verb expressing the action of loving, presented in an informal, more intimate form.\n" +
-                "This sentence is used in situations where there is a close relationship, and informal language is appropriate.\n" +
-                "The choice of speech level depends on the relationship and context between the speaker and the listener. Formal language is more courteous and polite, while informal language is used in more familiar and close relationships. The decision on which expression to use is influenced by the specific dynamics of the conversation and the relationship with the other person.\"\n" +
+                "\"\n" +
+                "The difference in speech levels between \"나는 너를 사랑한다.\" and \"난 널 사랑해.\" stems from the linguistic structure and rules of formality and informality in the Korean language. The former is expressed in formal language, where the subject '나는' and the object '너를' are presented accurately, and the verb '사랑한다' is formulated in a formal tone. On the other hand, the latter is in informal language, with contractions like '난' for '나는' and '널' for '너를,' reflecting casual vocabulary usage. The verb '사랑해' is also in an informal tone. The reason for this distinction lies primarily in choosing an appropriate tone based on the relationship between the speaker and the listener and the context of the conversation, adhering to the rules of formal and informal language use in Korean.\"\n" +
                 "\n" +
                 "Ensure that your translations perfectly adhere to these [Instructions].";
     }
