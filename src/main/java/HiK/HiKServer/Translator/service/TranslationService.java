@@ -7,6 +7,7 @@ import HiK.HiKServer.Translator.dto.TranslationForm;
 import HiK.HiKServer.Translator.repositroy.SentenceRepository;
 import HiK.HiKServer.User.domain.User;
 import HiK.HiKServer.User.repository.UserRepository;
+import HiK.HiKServer.gpt.*;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import lombok.extern.slf4j.Slf4j;

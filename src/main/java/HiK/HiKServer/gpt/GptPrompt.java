@@ -1,8 +1,10 @@
-package HiK.HiKServer.Translator.service;
+package HiK.HiKServer.gpt;
 
 public class GptPrompt {
     private String prompt;
     private String system;
+
+    public GptPrompt() {}
 
     private String makePrompt(int userAge, String srcSentence, String place, String listener, int intimacy){
         if (place.equals("online") && (listener.equals("seller") || listener.equals("buyer")))

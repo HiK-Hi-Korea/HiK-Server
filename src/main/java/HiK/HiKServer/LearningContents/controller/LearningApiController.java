@@ -2,6 +2,7 @@ package HiK.HiKServer.LearningContents.controller;
 
 import HiK.HiKServer.LearningContents.dto.*;
 import HiK.HiKServer.LearningContents.service.LearningContentService;
+import HiK.HiKServer.Translator.dto.TranslationForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,12 +34,23 @@ public class LearningApiController {
     @PostMapping("content/getTrans")
     public ResponseEntity<ChangeSentenceResponseDto> getTrans(@RequestHeader(name = "X-UserId") String userId, @RequestBody ChangeSentenceDto changeSentenceDto) throws IOException {
         log.info("get Trans 시작");
-        ChangeSentenceResponseDto changeSentenceRequestDto = learningContentService.transSentenceInContent(userId, changeSentenceDto);
-        if (changeSentenceRequestDto != null) log.info("translation - changeSentenceRequestDto" + changeSentenceRequestDto.getTranslatedSentence());
+        ChangeSentenceResponseDto changeSentenceResponseDto = learningContentService.transSentenceInContent(userId, changeSentenceDto);
+        if (changeSentenceResponseDto != null) log.info("translation - changeSentenceRequestDto" + changeSentenceResponseDto.getTranslatedSentence());
         else log.info("translatedSentence nul!!!");
-        return (changeSentenceRequestDto != null) ? ResponseEntity.status(HttpStatus.OK).body(changeSentenceRequestDto):
+        return (changeSentenceResponseDto != null) ? ResponseEntity.status(HttpStatus.OK).body(changeSentenceResponseDto):
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
+
+    @PostMapping("content/getOriginalTranslate")
+    public ResponseEntity<ChangeSentenceResponseDto> getOriginalTranslate(@RequestHeader(name = "X-UserId") String userId, @RequestBody TranslationForm translationForm) throws IOException {
+        log.info("get original translate 시작");
+        ChangeSentenceResponseDto changeSentenceResponseDto = learningContentService.getOriginalTranslate(translationForm);
+        if (changeSentenceResponseDto != null) log.info("translation - changeSentenceRequestDto" + changeSentenceResponseDto.getTranslatedSentence());
+        else log.info("translatedSentence nul!!!");
+        return (changeSentenceResponseDto != null) ? ResponseEntity.status(HttpStatus.OK).body(changeSentenceResponseDto):
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
     // 문장 클릭하고 상황변경 시켰을 때 왜 이렇게 이유가 나오는지 알려주는 api
     @PostMapping("content/getReason")
     public ResponseEntity<ReasonResponseDto> getReason(@RequestHeader(name = "X-UserId") String userId, @RequestBody ReasonRequestDto reasonRequestDto) throws IOException {

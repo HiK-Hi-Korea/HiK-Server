@@ -4,7 +4,9 @@ import HiK.HiKServer.LearningContents.domain.LearningContent;
 import HiK.HiKServer.LearningContents.dto.*;
 import HiK.HiKServer.LearningContents.repository.LearningContentRepository;
 import HiK.HiKServer.Translator.domain.Sentence;
-import HiK.HiKServer.Translator.service.TranslationService;
+import HiK.HiKServer.Translator.dto.TranslationForm;
+import HiK.HiKServer.Translator.service.*;
+import HiK.HiKServer.gpt.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +43,7 @@ public class LearningContentService {
     @Transactional
     public ChangeSentenceResponseDto transSentenceInContent(String userId, ChangeSentenceDto dto) throws IOException {
         String srcSentence = dto.getInput_sentence();
-        String prev_place = dto.getCur_place();
+        String prev_place = dto.getPrev_place();
         String prev_listener = dto.getPrev_listener();
         int prev_intimacy = dto.getPrev_intimacy();
         String cur_place = dto.getCur_place();
@@ -66,6 +68,39 @@ public class LearningContentService {
         return new ChangeSentenceResponseDto(targetSentence, voiceFile);
     }
 
+    @Transactional
+    public ChangeSentenceResponseDto getOriginalTranslate(TranslationForm dto) throws IOException {
+        String srcSentence = dto.getSourceSentence();
+        String place = dto.getPlace();
+        String listener = dto.getListener();
+        int intimacy = dto.getIntimacy();
+        GptPrompt_Learning gptPrompt_trans = new GptPrompt_Learning(srcSentence, place, listener, intimacy);
+        // Chain of Responsibility 패턴 이용
+        PromptHandler university_handler = new PromptHandler_Universty();
+        PromptHandler school_handler = new PromptHandler_School();
+        PromptHandler online_handler = new PromptHandler_Online();
+        PromptHandler general_handler = new PromptHandler_General();
+        university_handler.setSuccessor(school_handler);
+        school_handler.setSuccessor(online_handler);
+        online_handler.setSuccessor(general_handler);
+
+        university_handler.handleRequest(gptPrompt_trans, place, listener);
+
+        String system = gptPrompt_trans.getSystem();
+        String prompt = gptPrompt_trans.getPrompt();
+
+        String targetSentence = translationService.createTargetSentence(system, prompt);
+
+        //log.info("system: "+system, "\nprompt: "+prompt);
+        log.info("다른 상황에서 적용된 target Sentece: "+targetSentence);
+        if (targetSentence == null) {
+            throw new IllegalStateException("chat gpt - generate diff trans sentence 실패!");
+        }
+        // TTS 해서 voiceFile 받아오기 (파일 경로 반환)
+        // 할 것인지?
+        String voiceFile = translationService.getTTS(targetSentence);
+        return new ChangeSentenceResponseDto(targetSentence, voiceFile);
+    }
     public ReasonResponseDto getTransReason(String userId, ReasonRequestDto requestDto){
         String input_sentence= requestDto.getInput_sentence();
         String input_place = requestDto.getInput_place();

@@ -1,4 +1,4 @@
-package HiK.HiKServer.Translator.service;
+package HiK.HiKServer.gpt;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

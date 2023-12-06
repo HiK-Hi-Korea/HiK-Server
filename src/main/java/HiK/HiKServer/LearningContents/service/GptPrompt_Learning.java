@@ -1,6 +1,10 @@
 package HiK.HiKServer.LearningContents.service;
 
-public class GptPrompt_Learning {
+import HiK.HiKServer.gpt.GptPrompt;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class GptPrompt_Learning extends GptPrompt {
     private String prompt;
     private String system;
 
@@ -28,6 +32,7 @@ public class GptPrompt_Learning {
 
     public GptPrompt_Learning(String input_sentence, String input_place, String input_listener, int input_intimacy,
                               String place, String listener, int intimacy) {
+        super();
         this.prompt = makeTransPrompt(input_sentence, input_place, input_listener, input_intimacy, place, listener, intimacy);
         this.system = "You are an AI assistant specializing in Korean Style Translation. Your task is translate the sentence according to the location, listener and intimacy.\n" +
                 "The process follows the [Instruction] below.\n" +
@@ -81,6 +86,18 @@ public class GptPrompt_Learning {
                 "The choice of speech level depends on the relationship and context between the speaker and the listener. Formal language is more courteous and polite, while informal language is used in more familiar and close relationships. The decision on which expression to use is influenced by the specific dynamics of the conversation and the relationship with the other person.\"\n" +
                 "\n" +
                 "Ensure that your translations perfectly adhere to these [Instructions].\n";
+    }
+
+    public GptPrompt_Learning(String srcSentence, String place, String listener, int intimacy){
+        log.info("gpt prompt learning버전을 사용한 프롬프트");
+        if (place.equals("online") && (listener.equals("seller") || listener.equals("buyer")))
+            place = "online-transaction";
+        String prompt = "Transfer the style of the sentence according to the listener and intimacy below:\n"+
+                "<Input>\n"+
+                "sentence: "+ srcSentence +
+                "Filter - location: "+place+", listener: "+listener+", intimacy: "+intimacy;
+
+        this.prompt = prompt;
     }
 
     public void setSystem(String system){
