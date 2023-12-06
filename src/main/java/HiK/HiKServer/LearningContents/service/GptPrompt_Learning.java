@@ -20,13 +20,13 @@ public class GptPrompt_Learning extends GptPrompt {
 
     private String makeReasonPrompt(String input_sentence, String input_place, String input_listener, int input_intimacy,
                                     String translated_sentence, String place, String listener, int intimacy){
-        String prompt = "Explain how the input sentence was translated into translated sentense based on the location, listener and intimacy of the input filter and the filter used in the translation. Print out your answer in less than 300 characters. The input sentence, translated sentence, and filters used are as follows.\n" +
+        log.info("make reason prompt: input sentence: "+input_sentence+" translated sentence: "+translated_sentence);
+        String prompt = "Explain how the input sentence was translated into translated sentense based on the location, listener and intimacy of the input filter and the filter used in the translation. Print out your answer in less than 500 characters. The input sentence, translated sentence, and filters used are as follows.\n" +
                 "<Input>\n" +
                 "Input_Sentence: "+input_sentence+"\n" +
                 "Input__Filter - input_location: "+input_place+", input_listener: "+input_listener+", input_intimacy: "+input_intimacy+"\n" +
                 "Translated_Sentence: "+translated_sentence+"\n" +
                 "Filter - location: "+place+", listener: "+listener+", intimacy: "+intimacy;
-
         return prompt;
     }
 
