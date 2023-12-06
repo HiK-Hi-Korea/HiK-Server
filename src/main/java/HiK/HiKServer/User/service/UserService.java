@@ -3,6 +3,7 @@ package HiK.HiKServer.User.service;
 import HiK.HiKServer.LearningContents.domain.LearningContent;
 import HiK.HiKServer.LearningContents.dto.LearningContentDto;
 import HiK.HiKServer.LearningContents.repository.LearningContentRepository;
+import HiK.HiKServer.User.UserDto;
 import HiK.HiKServer.User.domain.User;
 import HiK.HiKServer.User.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,18 @@ public class UserService {
     @Autowired
     private LearningContentRepository learningContentRepository;
 
+    public UserDto getUserInfo(String userId){
+        User user = userRepository.findById(userId).orElseThrow();
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setName(user.getName());
+        userDto.setEmail(user.getEmail());
+        userDto.setAge(user.getAge());
+        userDto.setNation(user.getNation());
+        userDto.setLanguage(user.getLanguage());
+        userDto.setGender(user.getGender());
+        return userDto;
+    }
     public List<LearningContent> getUserContentList(String userId){
         List<LearningContent> learningContentList = learningContentRepository.getByUserId(userId);
         return learningContentList;
