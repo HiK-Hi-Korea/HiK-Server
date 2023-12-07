@@ -1,7 +1,10 @@
 package HiK.HiKServer.gpt;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Arrays;
 
+@Slf4j
 public class PromptHandler_OnlineChatting extends PromptHandler {
     String[] online_chatting_set = {"online", "online-chatting", "online chatting"};
     String online_chatting_system = "You are an AI assistant specializing in English to Korean translation and Korean Style Translation. Your task consists of two steps.\n" +
@@ -50,6 +53,7 @@ public class PromptHandler_OnlineChatting extends PromptHandler {
         boolean isExist = Arrays.stream(online_chatting_set).anyMatch(request_place::equals);
         if (isExist) {
             gptPrompt.setSystem(online_chatting_system);
+            log.info("PROMPT: Online chatting");
         } else if (successor != null) {
             successor.handleRequest(gptPrompt, request_place, request_listener);
         }

@@ -79,14 +79,13 @@ public class GptPrompt_Learning extends GptPrompt {
     }
 
     public GptPrompt_Learning(String srcSentence, String place, String listener, int intimacy){
-        log.info("gpt prompt learning버전을 사용한 프롬프트");
+        log.info("gpt prompt learning 버전을 사용한 프롬프트");
         if (place.equals("online") && (listener.equals("seller") || listener.equals("buyer")))
             place = "online-transaction";
         String prompt = "Transfer the style of the sentence according to the listener and intimacy below:\n"+
                 "<Input>\n"+
                 "sentence: "+ srcSentence +
                 "Filter - location: "+place+", listener: "+listener+", intimacy: "+intimacy;
-
         this.prompt = prompt;
     }
 

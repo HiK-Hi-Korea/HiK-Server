@@ -1,5 +1,8 @@
 package HiK.HiKServer.gpt;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class PromptHandler_OnlineTransaction extends PromptHandler {
     //    String[] online_set = {"online-transaction", "online-chatting", "online transaction", "online chatting"};
     String online_system = "You are an AI assistant specializing in English to Korean translation and Korean Style Translation. Your task consists of two steps.\n" +
@@ -36,6 +39,7 @@ public class PromptHandler_OnlineTransaction extends PromptHandler {
             isExist = true;
         if (isExist) {
             gptPrompt.setSystem(online_system);
+            log.info("PROMPT: Online transaction");
         } else if (successor != null) {
             successor.handleRequest(gptPrompt, request_place, request_listener);
         }

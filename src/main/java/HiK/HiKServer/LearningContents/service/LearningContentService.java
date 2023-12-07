@@ -76,6 +76,7 @@ public class LearningContentService {
         int intimacy = dto.getIntimacy();
         GptPrompt_Learning gptPrompt_trans = new GptPrompt_Learning(srcSentence, place, listener, intimacy);
 
+        log.info("Learning Content - Translation Start");
         // Chain of Responsibility 패턴 이용
         PromptHandler university_handler = new PromptHandler_Universty();
         PromptHandler school_handler = new PromptHandler_School();
@@ -95,12 +96,11 @@ public class LearningContentService {
         String targetSentence = translationService.createTargetSentence(system, prompt);
 
         //log.info("system: "+system, "\nprompt: "+prompt);
-        log.info("다른 상황에서 적용된 target Sentece: "+targetSentence);
+        log.info("Learning Content - Other Situation Translation(다른상황에서 적용된 target Sentece):  "+targetSentence);
         if (targetSentence == null) {
             throw new IllegalStateException("chat gpt - generate diff trans sentence 실패!");
         }
-        // TTS 해서 voiceFile 받아오기 (파일 경로 반환)
-        // 할 것인지?
+
         String voiceFile = translationService.getTTS(targetSentence);
         return new ChangeSentenceResponseDto(targetSentence, voiceFile);
     }

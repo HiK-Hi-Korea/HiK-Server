@@ -1,7 +1,10 @@
 package HiK.HiKServer.gpt;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Arrays;
 
+@Slf4j
 public class PromptHandler_Universty extends PromptHandler {
     String[] university_set = {"university", "college",};
     String university_system = "You are an AI assistant specializing in English to Korean translation and Korean Style Translation. Your task consists of two steps.\n" +
@@ -58,6 +61,7 @@ public class PromptHandler_Universty extends PromptHandler {
         boolean isExist = Arrays.stream(university_set).anyMatch(request_place::equals);
         if (isExist) {
             gptPrompt.setSystem(university_system);
+            log.info("PROMPT: University");
         } else if (successor != null) {
             successor.handleRequest(gptPrompt, request_place, request_listener);
         }

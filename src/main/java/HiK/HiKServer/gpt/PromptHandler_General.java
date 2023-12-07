@@ -1,5 +1,8 @@
 package HiK.HiKServer.gpt;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class PromptHandler_General extends PromptHandler {
     //    String[] general_set = {""};
     String general_system = "You are an AI assistant specializing in English to Korean translation and Korean Style Translation. Your task consists of two steps.\n" +
@@ -44,6 +47,7 @@ public class PromptHandler_General extends PromptHandler {
     public void handleRequest(GptPrompt gptPrompt, String request_place, String request_listener) {
         if (true) {
             gptPrompt.setSystem(general_system);
+            log.info("PROMPT: General");
         } else if (successor != null) {
             successor.handleRequest(gptPrompt, request_place, request_listener);
         }
