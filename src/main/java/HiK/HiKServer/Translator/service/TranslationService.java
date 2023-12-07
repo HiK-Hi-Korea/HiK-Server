@@ -86,7 +86,8 @@ public class TranslationService {
         String system = gptPrompt.getSystem();
         String prompt = gptPrompt.getPrompt();
 
-        String targetSentence = createTargetSentence(system, prompt);
+        String temptargetSentence = createTargetSentence(system, prompt);
+        String targetSentence = temptargetSentence.replace("<Output>\n","");
 
         log.info("system: "+system, "\nprompt: "+prompt);
         log.info("target Sentece: "+targetSentence);
