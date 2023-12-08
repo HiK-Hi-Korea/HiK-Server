@@ -95,7 +95,7 @@ public class LearningContentService {
 
 //        String targetSentence = translationService.createTargetSentence(system, prompt);
         String temptargetSentence = translationService.createTargetSentence(system, prompt);
-        String targetSentence = temptargetSentence.replace("<Output>\n","");
+        String targetSentence = temptargetSentence.replace("<Output>","");
 
         //log.info("system: "+system, "\nprompt: "+prompt);
         log.info("Learning Content - Other Situation Translation(다른상황에서 적용된 target Sentece):  "+targetSentence);
