@@ -96,7 +96,7 @@ src
 #### Requirements
 - Google Cloud Platform - Register Login Api and TTS Api
 - OpenAI - Chat GPT Api Key
-- Amazon RDS S3
+- Amazon EC2, RDS, S3
 #### Prerequisites
 - Spring boot 2.7.x
 #### Step-by-Step Building Instruction
